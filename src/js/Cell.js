@@ -1,4 +1,6 @@
-class Cell {
+import { maxRow, maxCol } from './constants.js'
+
+export default class Cell {
   constructor(r, c) {
     this.row = r
     this.col = c

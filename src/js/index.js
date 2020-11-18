@@ -1,3 +1,6 @@
+import { CANVAS_WIDTH, CANVAS_HEIGHT, BOX_WIDTH, maxRow, maxCol } from "./constants.js"
+import Cell from "./Cell"
+
 const canvas = document.querySelector('canvas')
 const ctx = canvas.getContext('2d')
 const xHover = document.getElementById('xHover')
