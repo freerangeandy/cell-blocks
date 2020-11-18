@@ -1,0 +1,6 @@
+const CANVAS_WIDTH = 1200
+const CANVAS_HEIGHT = 600
+const BOX_WIDTH = 20
+
+const maxRow = CANVAS_HEIGHT/BOX_WIDTH
+const maxCol = CANVAS_WIDTH/BOX_WIDTH
