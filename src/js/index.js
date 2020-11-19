@@ -103,11 +103,11 @@ let animator
 const startListener = (e) => {
   if (!isRunning) {
     animator = setInterval(animate, 500)
-    startButton.innerHTML = "Pause Life"
-    startButton.style.backgroundColor = "#f57234"
+    startButton.innerHTML = "Pause"
+    startButton.style.backgroundColor = "#ef4161"
   } else {
     clearInterval(animator)
-    startButton.innerHTML = "Start Life"
+    startButton.innerHTML = "Start"
     startButton.style.backgroundColor = "#81da6b"
   }
   isRunning = !isRunning
