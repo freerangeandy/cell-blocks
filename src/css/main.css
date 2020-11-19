@@ -1,8 +1,7 @@
 .header-row {
-  width: 200px;
   display: flex;
   flex-direction: row;
-  justify-content: space-between;
+  justify-content: center;
   align-items: baseline;
 }
 
@@ -17,6 +16,12 @@
 
 #startButton:active {
   background-color: #75c561;
+}
+
+.canvas-row {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
 }
 
 canvas {
