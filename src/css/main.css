@@ -1,3 +1,7 @@
+body {
+  background-color: #afc2d0;
+}
+
 .header-row {
   display: flex;
   flex-direction: row;
@@ -25,5 +29,6 @@
 }
 
 canvas {
-  border: 1px solid #555555;
+  border: 3px solid #555555;
+  background-color: #fffef6;
 }
