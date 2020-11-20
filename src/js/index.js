@@ -1,4 +1,4 @@
-import { CANVAS_WIDTH, CANVAS_HEIGHT, BOX_WIDTH, maxRow, maxCol } from "./constants.js"
+import { CANVAS_WIDTH, CANVAS_HEIGHT, BOX_WIDTH, maxRow, maxCol, RAND_DENSITY } from "./constants.js"
 import Cell from "./Cell"
 
 const canvas = document.querySelector('canvas')
@@ -7,7 +7,7 @@ const xHover = document.getElementById('xHover')
 const yHover = document.getElementById('yHover')
 const startButton = document.getElementById('startButton')
 const resetButton = document.getElementById('resetButton')
-const randomizeButton = document.getElementById('randomizeButton')
+const randomButton = document.getElementById('randomButton')
 
 let gridBoxes = [[]]
 
@@ -121,6 +121,17 @@ const resetListener = (e) => {
   drawGrid()
 }
 
+const randomListener = (e) => {
+  const seedArray = [...Array(maxRow)].map(row => [...Array(maxCol)].map(cell => Math.random() < RAND_DENSITY))
+  gridBoxes.forEach((row, rowID) => {
+    row.forEach((thisCell, colID) => {
+      if (thisCell.living !== seedArray[rowID][colID]){
+        toggleLife(rowID, colID)
+      }
+    })
+  })
+}
+
 canvas.addEventListener('click', clickListener)
 canvas.addEventListener('mousemove', moveListener)
 canvas.addEventListener('mouseout',() => {
@@ -130,6 +141,7 @@ canvas.addEventListener('mouseout',() => {
 
 startButton.addEventListener('click', startListener)
 resetButton.addEventListener('click', resetListener)
+randomButton.addEventListener('click', randomListener)
 
 // when browser loads script
 drawGrid()
