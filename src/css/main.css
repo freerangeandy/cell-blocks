@@ -24,7 +24,7 @@ body {
   text-decoration: none;
   font-family: 'Roboto', sans-serif;
   font-weight: 400;
-  color: #ffffff;
+  color: #fffef6;
   text-align: center;
   transition: all 0.2s;
 }
@@ -48,7 +48,6 @@ body {
 #randomButton {
   background-color: #d555ff;
 }
-
 
 .canvas-row {
   display: flex;
