@@ -13,11 +13,12 @@ body {
 
 .top-button {
   display: inline-block;
-  min-width: 70px;
+  min-width: 80px;
   height: 30px;
   padding: 0.3em 1.2em;
   margin: 0 0.1em 0.1em 0;
-  border: 0.16em solid rgba(255, 255, 255, 0);
+  outline: none;
+  border: 0.16em solid rgba(0, 0, 0, 0.1);
   border-radius: 0.8em;
   box-sizing: border-box;
   text-decoration: none;
