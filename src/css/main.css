@@ -32,11 +32,11 @@ body {
   border-color: rgba(255, 254, 246, 1);
 }
 
-#startButton {
+.start-button {
   background-color: #81da6b;
 }
 
-#startButton:active {
+.pause-button {
   background-color: #ef4161;
 }
 
