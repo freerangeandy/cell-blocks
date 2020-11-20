@@ -1,4 +1,4 @@
-import { CANVAS_WIDTH, CANVAS_HEIGHT, BOX_WIDTH, maxRow, maxCol } from "./constants.js"
+import { CANVAS_WIDTH, CANVAS_HEIGHT, BOX_WIDTH, maxRow, maxCol, RAND_DENSITY } from "./constants.js"
 import Cell from "./Cell"
 
 const canvas = document.querySelector('canvas')
@@ -6,6 +6,8 @@ const ctx = canvas.getContext('2d')
 const xHover = document.getElementById('xHover')
 const yHover = document.getElementById('yHover')
 const startButton = document.getElementById('startButton')
+const resetButton = document.getElementById('resetButton')
+const randomButton = document.getElementById('randomButton')
 
 let gridBoxes = [[]]
 
@@ -103,14 +105,31 @@ let animator
 const startListener = (e) => {
   if (!isRunning) {
     animator = setInterval(animate, 500)
-    startButton.innerHTML = "Pause Life"
-    startButton.style.backgroundColor = "#f57234"
+    startButton.innerHTML = "Pause"
+    startButton.classList.toggle("pause-button", true)
+    startButton.classList.toggle("start-button", false)
   } else {
     clearInterval(animator)
-    startButton.innerHTML = "Start Life"
-    startButton.style.backgroundColor = "#81da6b"
+    startButton.innerHTML = "Start"
+    startButton.classList.toggle("pause-button", false)
+    startButton.classList.toggle("start-button", true)
   }
   isRunning = !isRunning
+}
+
+const resetListener = (e) => {
+  drawGrid()
+}
+
+const randomListener = (e) => {
+  const seedArray = [...Array(maxRow)].map(row => [...Array(maxCol)].map(cell => Math.random() < RAND_DENSITY))
+  gridBoxes.forEach((row, rowID) => {
+    row.forEach((thisCell, colID) => {
+      if (thisCell.living !== seedArray[rowID][colID]){
+        toggleLife(rowID, colID)
+      }
+    })
+  })
 }
 
 canvas.addEventListener('click', clickListener)
@@ -121,6 +140,8 @@ canvas.addEventListener('mouseout',() => {
 })
 
 startButton.addEventListener('click', startListener)
+resetButton.addEventListener('click', resetListener)
+randomButton.addEventListener('click', randomListener)
 
 // when browser loads script
 drawGrid()
