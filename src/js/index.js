@@ -6,6 +6,8 @@ const ctx = canvas.getContext('2d')
 const xHover = document.getElementById('xHover')
 const yHover = document.getElementById('yHover')
 const startButton = document.getElementById('startButton')
+const resetButton = document.getElementById('resetButton')
+const randomizeButton = document.getElementById('randomizeButton')
 
 let gridBoxes = [[]]
 
@@ -115,6 +117,10 @@ const startListener = (e) => {
   isRunning = !isRunning
 }
 
+const resetListener = (e) => {
+  drawGrid()
+}
+
 canvas.addEventListener('click', clickListener)
 canvas.addEventListener('mousemove', moveListener)
 canvas.addEventListener('mouseout',() => {
@@ -123,6 +129,7 @@ canvas.addEventListener('mouseout',() => {
 })
 
 startButton.addEventListener('click', startListener)
+resetButton.addEventListener('click', resetListener)
 
 // when browser loads script
 drawGrid()
