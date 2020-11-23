@@ -89,10 +89,26 @@ const getRowColID = (e) => {
 const getFillColor = (thisCell) => thisCell.living ? '#770000' : 'white'
 
 // event handlers
+let mouseIsDown = false
+let lastCellClicked = []
+const clickDragStartListener = (e) => {
+  lastCellClicked = getRowColID(e)
+  mouseIsDown = true
+}
+const clickDragEndListener = (e) => {
+  mouseIsDown = false
+}
+
 const moveListener = (e) => {
   const [rowID, colID] = getRowColID(e)
   rowHover.innerHTML = rowID
   colHover.innerHTML = colID
+  if (mouseIsDown) {
+    if (!(lastCellClicked[0] == rowID && lastCellClicked[1] == colID)) {
+      toggleLife(rowID, colID)
+      lastCellClicked = [rowID, colID]
+    }
+  }
 }
 
 const clickListener = (e) => {
@@ -138,6 +154,9 @@ canvas.addEventListener('mouseout',() => {
   rowHover.innerHTML = '---'
   colHover.innerHTML = '---'
 })
+canvas.addEventListener('mousedown', clickDragStartListener)
+document.addEventListener('mouseup', clickDragEndListener)
+
 
 startButton.addEventListener('click', startListener)
 resetButton.addEventListener('click', resetListener)
