@@ -33,12 +33,9 @@ const updateNeighborsLivingNeighbors = (cell) => {
 
 const toggleLife = (i, j) => {
   const thisCell = gridBoxes[i][j]
-  ctx.beginPath()
   thisCell.living = !thisCell.living
   updateNeighborsLivingNeighbors(thisCell)
-  ctx.fillStyle = getFillColor(thisCell)
-  ctx.fillRect(j*BOX_WIDTH+1,i*BOX_WIDTH+1,BOX_WIDTH-2,BOX_WIDTH-2)
-  ctx.stroke()
+  paintCell(ctx, thisCell)
 }
 
 // go through the conway life cycle:
@@ -65,10 +62,7 @@ const applyNextStates = () => {
       thisCell.advanceState() // conway rules
       if (stateFlip){
         updateNeighborsLivingNeighbors(thisCell)
-        ctx.beginPath()
-        ctx.fillStyle = getFillColor(thisCell)
-        ctx.fillRect(colID*BOX_WIDTH+1,rowID*BOX_WIDTH+1,BOX_WIDTH-2,BOX_WIDTH-2)
-        ctx.stroke()
+        paintCell(ctx, thisCell)
       }
     })
   })
@@ -84,6 +78,13 @@ const getRowColID = (e) => {
   const rowID = Math.floor(e.offsetY/BOX_WIDTH)
   const colID = Math.floor(e.offsetX/BOX_WIDTH)
   return [rowID, colID]
+}
+
+const paintCell = (ctx, thisCell) => {
+  ctx.beginPath()
+  ctx.fillStyle = getFillColor(thisCell)
+  ctx.fillRect(thisCell.col*BOX_WIDTH+1,thisCell.row*BOX_WIDTH+1,BOX_WIDTH-2,BOX_WIDTH-2)
+  ctx.stroke()
 }
 
 const isValidCell = (row, col) => (row>=0 && row<maxRow && col>=0 && col<maxCol)
