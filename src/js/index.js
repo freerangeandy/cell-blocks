@@ -86,17 +86,19 @@ const getRowColID = (e) => {
   return [rowID, colID]
 }
 
+const isValidCell = (row, col) => (row>=0 && row<maxRow && col>=0 && col<maxCol)
 const getFillColor = (thisCell) => thisCell.living ? '#770000' : 'white'
 
 // event handlers
 let mouseIsDown = false
-let lastCellClicked = []
+let eraseMode = false
 const clickDragStartListener = (e) => {
   const [rowID, colID] = getRowColID(e)
-  lastCellClicked = [rowID, colID]
-  toggleLife(rowID, colID)
+  eraseMode = gridBoxes[rowID][colID].living ? true : false
   mouseIsDown = true
+  toggleLife(rowID, colID)
 }
+
 const clickDragEndListener = (e) => {
   mouseIsDown = false
 }
@@ -105,18 +107,12 @@ const moveListener = (e) => {
   const [rowID, colID] = getRowColID(e)
   rowHover.innerHTML = rowID
   colHover.innerHTML = colID
-  if (mouseIsDown) {
-    if (!(lastCellClicked[0] == rowID && lastCellClicked[1] == colID)) {
+  if (mouseIsDown && isValidCell(rowID, colID)) {
+    if (eraseMode === gridBoxes[rowID][colID].living){
       toggleLife(rowID, colID)
-      lastCellClicked = [rowID, colID]
     }
   }
 }
-
-// const clickListener = (e) => {
-//   const [rowID, colID] = getRowColID(e)
-//   toggleLife(rowID, colID)
-// }
 
 let isRunning = false
 let animator
@@ -150,7 +146,6 @@ const randomListener = (e) => {
   })
 }
 
-// canvas.addEventListener('click', clickListener)
 canvas.addEventListener('mousemove', moveListener)
 canvas.addEventListener('mouseout',() => {
   rowHover.innerHTML = '---'
@@ -158,7 +153,6 @@ canvas.addEventListener('mouseout',() => {
 })
 canvas.addEventListener('mousedown', clickDragStartListener)
 document.addEventListener('mouseup', clickDragEndListener)
-
 
 startButton.addEventListener('click', startListener)
 resetButton.addEventListener('click', resetListener)
