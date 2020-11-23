@@ -33,12 +33,9 @@ const updateNeighborsLivingNeighbors = (cell) => {
 
 const toggleLife = (i, j) => {
   const thisCell = gridBoxes[i][j]
-  ctx.beginPath()
   thisCell.living = !thisCell.living
   updateNeighborsLivingNeighbors(thisCell)
-  ctx.fillStyle = getFillColor(thisCell)
-  ctx.fillRect(j*BOX_WIDTH+1,i*BOX_WIDTH+1,BOX_WIDTH-2,BOX_WIDTH-2)
-  ctx.stroke()
+  paintCell(ctx, thisCell)
 }
 
 // go through the conway life cycle:
@@ -65,10 +62,7 @@ const applyNextStates = () => {
       thisCell.advanceState() // conway rules
       if (stateFlip){
         updateNeighborsLivingNeighbors(thisCell)
-        ctx.beginPath()
-        ctx.fillStyle = getFillColor(thisCell)
-        ctx.fillRect(colID*BOX_WIDTH+1,rowID*BOX_WIDTH+1,BOX_WIDTH-2,BOX_WIDTH-2)
-        ctx.stroke()
+        paintCell(ctx, thisCell)
       }
     })
   })
@@ -86,18 +80,39 @@ const getRowColID = (e) => {
   return [rowID, colID]
 }
 
+const paintCell = (ctx, thisCell) => {
+  ctx.beginPath()
+  ctx.fillStyle = getFillColor(thisCell)
+  ctx.fillRect(thisCell.col*BOX_WIDTH+1,thisCell.row*BOX_WIDTH+1,BOX_WIDTH-2,BOX_WIDTH-2)
+  ctx.stroke()
+}
+
+const isValidCell = (row, col) => (row>=0 && row<maxRow && col>=0 && col<maxCol)
 const getFillColor = (thisCell) => thisCell.living ? '#770000' : 'white'
 
 // event handlers
+let mouseIsDown = false
+let eraseMode = false
+const clickDragStartListener = (e) => {
+  const [rowID, colID] = getRowColID(e)
+  eraseMode = gridBoxes[rowID][colID].living ? true : false
+  mouseIsDown = true
+  toggleLife(rowID, colID)
+}
+
+const clickDragEndListener = (e) => {
+  mouseIsDown = false
+}
+
 const moveListener = (e) => {
   const [rowID, colID] = getRowColID(e)
   rowHover.innerHTML = rowID
   colHover.innerHTML = colID
-}
-
-const clickListener = (e) => {
-  const [rowID, colID] = getRowColID(e)
-  toggleLife(rowID, colID)
+  if (mouseIsDown && isValidCell(rowID, colID)) {
+    if (eraseMode === gridBoxes[rowID][colID].living){
+      toggleLife(rowID, colID)
+    }
+  }
 }
 
 let isRunning = false
@@ -132,12 +147,13 @@ const randomListener = (e) => {
   })
 }
 
-canvas.addEventListener('click', clickListener)
 canvas.addEventListener('mousemove', moveListener)
 canvas.addEventListener('mouseout',() => {
   rowHover.innerHTML = '---'
   colHover.innerHTML = '---'
 })
+canvas.addEventListener('mousedown', clickDragStartListener)
+document.addEventListener('mouseup', clickDragEndListener)
 
 startButton.addEventListener('click', startListener)
 resetButton.addEventListener('click', resetListener)
