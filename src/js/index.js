@@ -70,13 +70,7 @@ const applyNextStates = () => {
 const animate = () => {
   setNextStates()
   applyNextStates()
-  let opacity = 0
-  const fader = setInterval(() => {
-    if (opacity >= 1) clearInterval(fader)
-    ctx.globalAlpha = opacity
-    paintAllCells(ctx)
-    opacity += 0.1
-  }, 15)
+  fadeIn(() => paintAllCells(ctx), ctx, 15)
 }
 
 // utilities
@@ -99,6 +93,16 @@ const paintAllCells = (ctx) => {
       paintCell(ctx, thisCell)
     })
   })
+}
+
+const fadeIn = (painter, ctx, interval) => {
+  let opacity = 0
+  const fader = setInterval(() => {
+    if (opacity >= 1) clearInterval(fader)
+    ctx.globalAlpha = opacity
+    painter()
+    opacity += 0.1
+  }, interval)
 }
 
 const isValidCell = (row, col) => (row>=0 && row<maxRow && col>=0 && col<maxCol)
@@ -161,13 +165,7 @@ const randomListener = (e) => {
       }
     })
   })
-  let opacity = 0
-  const fader = setInterval(() => {
-    if (opacity >= 1) clearInterval(fader)
-    ctx.globalAlpha = opacity
-    paintAllCells(ctx)
-    opacity += 0.1
-  }, 15)
+  fadeIn(() => paintAllCells(ctx), ctx, 15)
 }
 
 canvas.addEventListener('mousemove', moveListener)
