@@ -62,7 +62,6 @@ const applyNextStates = () => {
       thisCell.advanceState() // conway rules
       if (stateFlip){
         updateNeighborsLivingNeighbors(thisCell)
-        paintCell(ctx, thisCell)
       }
     })
   })
@@ -71,6 +70,13 @@ const applyNextStates = () => {
 const animate = () => {
   setNextStates()
   applyNextStates()
+  let opacity = 0
+  const fader = setInterval(() => {
+    if (opacity >= 1) clearInterval(fader)
+    ctx.globalAlpha = opacity
+    paintAllCells(ctx)
+    opacity += 0.1
+  }, 15)
 }
 
 // utilities
