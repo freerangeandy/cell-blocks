@@ -113,10 +113,11 @@ let mouseIsDown = false
 let eraseMode = false
 const clickDragStartListener = (e) => {
   const [rowID, colID] = getRowColID(e)
-  eraseMode = gridBoxes[rowID][colID].living ? true : false
+  const thisCell = gridBoxes[rowID][colID]
+  eraseMode = thisCell.living ? true : false
   mouseIsDown = true
   toggleLife(rowID, colID)
-  paintCell(ctx, gridBoxes[rowID][colID])
+  paintCell(ctx, thisCell)
 }
 
 const clickDragEndListener = (e) => {
@@ -128,9 +129,10 @@ const moveListener = (e) => {
   rowHover.innerHTML = rowID
   colHover.innerHTML = colID
   if (mouseIsDown && isValidCell(rowID, colID)) {
-    if (eraseMode === gridBoxes[rowID][colID].living){
+    const thisCell = gridBoxes[rowID][colID]
+    if (eraseMode === thisCell.living){
       toggleLife(rowID, colID)
-      paintCell(ctx, gridBoxes[rowID][colID])
+      paintCell(ctx, thisCell)
     }
   }
 }
