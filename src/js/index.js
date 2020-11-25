@@ -87,6 +87,14 @@ const paintCell = (ctx, thisCell) => {
   ctx.stroke()
 }
 
+const paintAllCells = (ctx) => {
+  gridBoxes.forEach((row, rowID) => {
+    row.forEach((thisCell, colID) => {
+      paintCell(ctx, thisCell)
+    })
+  })
+}
+
 const isValidCell = (row, col) => (row>=0 && row<maxRow && col>=0 && col<maxCol)
 const getFillColor = (thisCell) => thisCell.living ? '#770000' : 'white'
 
@@ -144,10 +152,16 @@ const randomListener = (e) => {
     row.forEach((thisCell, colID) => {
       if (thisCell.living !== seedArray[rowID][colID]){
         toggleLife(rowID, colID)
-        paintCell(ctx, thisCell)
       }
     })
   })
+  let opacity = 0
+  const fader = setInterval(() => {
+    if (opacity >= 1) clearInterval(fader)
+    ctx.globalAlpha = opacity
+    paintAllCells(ctx)
+    opacity += 0.1
+  }, 15)
 }
 
 canvas.addEventListener('mousemove', moveListener)
