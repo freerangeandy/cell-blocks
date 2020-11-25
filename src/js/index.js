@@ -35,7 +35,7 @@ const toggleLife = (i, j) => {
   const thisCell = gridBoxes[i][j]
   thisCell.living = !thisCell.living
   updateNeighborsLivingNeighbors(thisCell)
-  paintCell(ctx, thisCell)
+  // paintCell(ctx, thisCell)
 }
 
 // go through the conway life cycle:
@@ -98,6 +98,7 @@ const clickDragStartListener = (e) => {
   eraseMode = gridBoxes[rowID][colID].living ? true : false
   mouseIsDown = true
   toggleLife(rowID, colID)
+  paintCell(ctx, gridBoxes[rowID][colID])
 }
 
 const clickDragEndListener = (e) => {
@@ -111,6 +112,7 @@ const moveListener = (e) => {
   if (mouseIsDown && isValidCell(rowID, colID)) {
     if (eraseMode === gridBoxes[rowID][colID].living){
       toggleLife(rowID, colID)
+      paintCell(ctx, gridBoxes[rowID][colID])
     }
   }
 }
@@ -142,6 +144,7 @@ const randomListener = (e) => {
     row.forEach((thisCell, colID) => {
       if (thisCell.living !== seedArray[rowID][colID]){
         toggleLife(rowID, colID)
+        paintCell(ctx, thisCell)
       }
     })
   })
