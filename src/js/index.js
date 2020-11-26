@@ -22,7 +22,6 @@ const drawGrid = () => {
       ctx.stroke()
     })
   })
-  gridBoxes = blankCellGrid(maxRow, maxCol)
 }
 
 // tie this action to flipping of a cell state as close to possible
@@ -154,7 +153,8 @@ const startListener = (e) => {
 }
 
 const resetListener = (e) => {
-  drawGrid()
+  gridBoxes = blankCellGrid(maxRow, maxCol)
+  fadeIn(() => paintAllCells(ctx), ctx, 15)
 }
 
 const randomListener = (e) => {
