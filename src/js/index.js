@@ -9,8 +9,11 @@ const startButton = document.getElementById('startButton')
 const resetButton = document.getElementById('resetButton')
 const randomButton = document.getElementById('randomButton')
 
-const blankCellGrid = (w, h) => [...Array(w)].map((_,i)=>[...Array(h)].map((_,j)=>new Cell(i,j)))
-let gridBoxes = blankCellGrid(maxRow, maxCol)
+let gridBoxes
+const init = () => {
+  gridBoxes = blankCellGrid(maxRow, maxCol)
+  drawGrid()
+}
 
 const drawGrid = () => {
   ctx.strokeStyle='#555555'
@@ -72,6 +75,8 @@ const animate = () => {
 }
 
 // utilities
+const blankCellGrid = (w, h) => [...Array(w)].map((_,i)=>[...Array(h)].map((_,j)=>new Cell(i,j)))
+
 const getRowColID = (e) => {
   const rowID = Math.floor(e.offsetY/BOX_WIDTH)
   const colID = Math.floor(e.offsetX/BOX_WIDTH)
@@ -182,4 +187,4 @@ resetButton.addEventListener('click', resetListener)
 randomButton.addEventListener('click', randomListener)
 
 // when browser loads script
-drawGrid()
+init()
