@@ -9,20 +9,20 @@ const startButton = document.getElementById('startButton')
 const resetButton = document.getElementById('resetButton')
 const randomButton = document.getElementById('randomButton')
 
-let gridBoxes = [[]]
+const blankCellGrid = (w, h) => [...Array(w)].map((_,i)=>[...Array(h)].map((_,j)=>new Cell(i,j)))
+let gridBoxes = blankCellGrid(maxRow, maxCol)
 
 const drawGrid = () => {
   ctx.strokeStyle='#555555'
-  ctx.clearRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
-  for(let i=0;i<maxRow;i++) {
-    gridBoxes[i] = []
-    for(let j=0;j<maxCol;j++) {
-      gridBoxes[i][j] = new Cell(i, j)
+  ctx.clearRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT)
+  gridBoxes.forEach((row, rowID) => {
+    row.forEach((_, colID) => {
       ctx.beginPath()
-      ctx.rect(j*BOX_WIDTH,i*BOX_WIDTH,BOX_WIDTH,BOX_WIDTH)
+      ctx.rect(colID*BOX_WIDTH,rowID*BOX_WIDTH,BOX_WIDTH,BOX_WIDTH)
       ctx.stroke()
-    }
-  }
+    })
+  })
+  gridBoxes = blankCellGrid(maxRow, maxCol)
 }
 
 // tie this action to flipping of a cell state as close to possible
@@ -35,7 +35,6 @@ const toggleLife = (i, j) => {
   const thisCell = gridBoxes[i][j]
   thisCell.living = !thisCell.living
   updateNeighborsLivingNeighbors(thisCell)
-  // paintCell(ctx, thisCell)
 }
 
 // go through the conway life cycle:
