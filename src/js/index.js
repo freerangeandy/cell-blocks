@@ -9,20 +9,22 @@ const startButton = document.getElementById('startButton')
 const resetButton = document.getElementById('resetButton')
 const randomButton = document.getElementById('randomButton')
 
-let gridBoxes = [[]]
+let gridBoxes
+const init = () => {
+  gridBoxes = blankCellGrid(maxRow, maxCol)
+  drawGrid()
+}
 
 const drawGrid = () => {
   ctx.strokeStyle='#555555'
-  ctx.clearRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
-  for(let i=0;i<maxRow;i++) {
-    gridBoxes[i] = []
-    for(let j=0;j<maxCol;j++) {
-      gridBoxes[i][j] = new Cell(i, j)
+  ctx.clearRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT)
+  gridBoxes.forEach((row, rowID) => {
+    row.forEach((_, colID) => {
       ctx.beginPath()
-      ctx.rect(j*BOX_WIDTH,i*BOX_WIDTH,BOX_WIDTH,BOX_WIDTH)
+      ctx.rect(colID*BOX_WIDTH,rowID*BOX_WIDTH,BOX_WIDTH,BOX_WIDTH)
       ctx.stroke()
-    }
-  }
+    })
+  })
 }
 
 // tie this action to flipping of a cell state as close to possible
@@ -35,7 +37,6 @@ const toggleLife = (i, j) => {
   const thisCell = gridBoxes[i][j]
   thisCell.living = !thisCell.living
   updateNeighborsLivingNeighbors(thisCell)
-  paintCell(ctx, thisCell)
 }
 
 // go through the conway life cycle:
@@ -62,7 +63,6 @@ const applyNextStates = () => {
       thisCell.advanceState() // conway rules
       if (stateFlip){
         updateNeighborsLivingNeighbors(thisCell)
-        paintCell(ctx, thisCell)
       }
     })
   })
@@ -71,9 +71,12 @@ const applyNextStates = () => {
 const animate = () => {
   setNextStates()
   applyNextStates()
+  fadeIn(() => paintAllCells(ctx), ctx, 8)
 }
 
 // utilities
+const blankCellGrid = (w, h) => [...Array(w)].map((_,i)=>[...Array(h)].map((_,j)=>new Cell(i,j)))
+
 const getRowColID = (e) => {
   const rowID = Math.floor(e.offsetY/BOX_WIDTH)
   const colID = Math.floor(e.offsetX/BOX_WIDTH)
@@ -87,6 +90,24 @@ const paintCell = (ctx, thisCell) => {
   ctx.stroke()
 }
 
+const paintAllCells = (ctx) => {
+  gridBoxes.forEach((row, rowID) => {
+    row.forEach((thisCell, colID) => {
+      paintCell(ctx, thisCell)
+    })
+  })
+}
+
+const fadeIn = (painter, ctx, interval) => {
+  let opacity = 0
+  const fader = setInterval(() => {
+    if (opacity >= 1) clearInterval(fader)
+    ctx.globalAlpha = opacity
+    painter()
+    opacity += 0.1
+  }, interval)
+}
+
 const isValidCell = (row, col) => (row>=0 && row<maxRow && col>=0 && col<maxCol)
 const getFillColor = (thisCell) => thisCell.living ? '#770000' : 'white'
 
@@ -95,9 +116,11 @@ let mouseIsDown = false
 let eraseMode = false
 const clickDragStartListener = (e) => {
   const [rowID, colID] = getRowColID(e)
-  eraseMode = gridBoxes[rowID][colID].living ? true : false
+  const thisCell = gridBoxes[rowID][colID]
+  eraseMode = thisCell.living ? true : false
   mouseIsDown = true
   toggleLife(rowID, colID)
+  paintCell(ctx, thisCell)
 }
 
 const clickDragEndListener = (e) => {
@@ -109,8 +132,10 @@ const moveListener = (e) => {
   rowHover.innerHTML = rowID
   colHover.innerHTML = colID
   if (mouseIsDown && isValidCell(rowID, colID)) {
-    if (eraseMode === gridBoxes[rowID][colID].living){
+    const thisCell = gridBoxes[rowID][colID]
+    if (eraseMode === thisCell.living){
       toggleLife(rowID, colID)
+      paintCell(ctx, thisCell)
     }
   }
 }
@@ -133,7 +158,8 @@ const startListener = (e) => {
 }
 
 const resetListener = (e) => {
-  drawGrid()
+  gridBoxes = blankCellGrid(maxRow, maxCol)
+  paintAllCells(ctx)
 }
 
 const randomListener = (e) => {
@@ -145,6 +171,7 @@ const randomListener = (e) => {
       }
     })
   })
+  paintAllCells(ctx)
 }
 
 canvas.addEventListener('mousemove', moveListener)
@@ -160,4 +187,4 @@ resetButton.addEventListener('click', resetListener)
 randomButton.addEventListener('click', randomListener)
 
 // when browser loads script
-drawGrid()
+init()
