@@ -159,7 +159,7 @@ const startListener = (e) => {
 
 const resetListener = (e) => {
   gridBoxes = blankCellGrid(maxRow, maxCol)
-  fadeIn(() => paintAllCells(ctx), ctx, 8)
+  paintAllCells(ctx)
 }
 
 const randomListener = (e) => {
@@ -171,7 +171,7 @@ const randomListener = (e) => {
       }
     })
   })
-  fadeIn(() => paintAllCells(ctx), ctx, 8)
+  paintAllCells(ctx)
 }
 
 canvas.addEventListener('mousemove', moveListener)
