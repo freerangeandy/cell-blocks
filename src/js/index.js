@@ -71,7 +71,7 @@ const applyNextStates = () => {
 const animate = () => {
   setNextStates()
   applyNextStates()
-  fadeIn(() => paintAllCells(ctx), ctx, 15)
+  fadeIn(() => paintAllCells(ctx), ctx, 8)
 }
 
 // utilities
@@ -159,7 +159,7 @@ const startListener = (e) => {
 
 const resetListener = (e) => {
   gridBoxes = blankCellGrid(maxRow, maxCol)
-  fadeIn(() => paintAllCells(ctx), ctx, 15)
+  fadeIn(() => paintAllCells(ctx), ctx, 8)
 }
 
 const randomListener = (e) => {
@@ -171,7 +171,7 @@ const randomListener = (e) => {
       }
     })
   })
-  fadeIn(() => paintAllCells(ctx), ctx, 15)
+  fadeIn(() => paintAllCells(ctx), ctx, 8)
 }
 
 canvas.addEventListener('mousemove', moveListener)
