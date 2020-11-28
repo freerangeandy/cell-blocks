@@ -8,6 +8,7 @@ const yHover = document.getElementById('yHover')
 const startButton = document.getElementById('startButton')
 const resetButton = document.getElementById('resetButton')
 const randomButton = document.getElementById('randomButton')
+const originPattern = document.getElementById('originPattern')
 
 let gridBoxes
 const init = () => {
@@ -112,26 +113,28 @@ const isValidCell = (row, col) => (row>=0 && row<maxRow && col>=0 && col<maxCol)
 const getFillColor = (thisCell) => thisCell.living ? '#770000' : 'white'
 
 // event handlers
-let mouseIsDown = false
+let drawingCells = false
 let eraseMode = false
-const clickDragStartListener = (e) => {
+let draggingPattern = false
+const clickDrawStartListener = (e) => {
   const [rowID, colID] = getRowColID(e)
   const thisCell = gridBoxes[rowID][colID]
   eraseMode = thisCell.living ? true : false
-  mouseIsDown = true
+  drawingCells = true
   toggleLife(rowID, colID)
   paintCell(ctx, thisCell)
 }
 
-const clickDragEndListener = (e) => {
-  mouseIsDown = false
+const mouseUpListener = (e) => {
+  drawingCells = false
+  draggingPattern = false
 }
 
 const moveListener = (e) => {
   const [rowID, colID] = getRowColID(e)
   rowHover.innerHTML = rowID
   colHover.innerHTML = colID
-  if (mouseIsDown && isValidCell(rowID, colID)) {
+  if (drawingCells && isValidCell(rowID, colID)) {
     const thisCell = gridBoxes[rowID][colID]
     if (eraseMode === thisCell.living){
       toggleLife(rowID, colID)
@@ -140,6 +143,18 @@ const moveListener = (e) => {
   }
 }
 
+const dragPatternStartListener = (e) => {
+  draggingPattern = true
+
+}
+
+const movePatternListener = (e) => {
+  if (draggingPattern) {
+
+  }
+}
+
+// button event listeners
 let isRunning = false
 let animator
 const startListener = (e) => {
@@ -174,17 +189,23 @@ const randomListener = (e) => {
   paintAllCells(ctx)
 }
 
+// handles drawing/erasing cells in canvas OR when dragging/dropping pattern
 canvas.addEventListener('mousemove', moveListener)
+document.addEventListener('mouseup', mouseUpListener)
+// handles drawing/erasing cells in canvas
+canvas.addEventListener('mousedown', clickDrawStartListener)
+// handles dragging pattern
+originPattern.addEventListener('mousedown', dragPatternStartListener)
+document.addEventListener('mousemove', movePatternListener)
+// handles button presses
+startButton.addEventListener('click', startListener)
+resetButton.addEventListener('click', resetListener)
+randomButton.addEventListener('click', randomListener)
+// reset cell ID display upon leaving canvas
 canvas.addEventListener('mouseout',() => {
   rowHover.innerHTML = '---'
   colHover.innerHTML = '---'
 })
-canvas.addEventListener('mousedown', clickDragStartListener)
-document.addEventListener('mouseup', clickDragEndListener)
-
-startButton.addEventListener('click', startListener)
-resetButton.addEventListener('click', resetListener)
-randomButton.addEventListener('click', randomListener)
 
 // when browser loads script
 init()
