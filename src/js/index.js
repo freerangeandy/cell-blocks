@@ -9,6 +9,7 @@ const startButton = document.getElementById('startButton')
 const resetButton = document.getElementById('resetButton')
 const randomButton = document.getElementById('randomButton')
 const originPattern = document.getElementById('originPattern')
+let dragImage = null
 
 let gridBoxes
 const init = () => {
@@ -115,7 +116,6 @@ const getFillColor = (thisCell) => thisCell.living ? '#770000' : 'white'
 // event handlers
 let drawingCells = false
 let eraseMode = false
-let draggingPattern = false
 const clickDrawStartListener = (e) => {
   const [rowID, colID] = getRowColID(e)
   const thisCell = gridBoxes[rowID][colID]
@@ -127,7 +127,6 @@ const clickDrawStartListener = (e) => {
 
 const mouseUpListener = (e) => {
   drawingCells = false
-  draggingPattern = false
 }
 
 const moveListener = (e) => {
@@ -143,15 +142,44 @@ const moveListener = (e) => {
   }
 }
 
+let clonedYet = false
 const dragPatternStartListener = (e) => {
-  draggingPattern = true
+  let shiftX = e.clientX - originPattern.getBoundingClientRect().left
+  let shiftY = e.clientY - originPattern.getBoundingClientRect().top
 
-}
-
-const movePatternListener = (e) => {
-  if (draggingPattern) {
-
+  const moveAt = (pageX, pageY) => {
+    if (dragImage) {
+      dragImage.style.left = pageX - shiftX + 'px'
+      dragImage.style.top = pageY - shiftY + 'px'
+    }
   }
+
+  const movePatternListener = (e) => {
+    if (!clonedYet) {
+      dragImage = originPattern.cloneNode(true)
+      dragImage.setAttribute('id', 'dragImage')
+
+      dragImage.style.position = 'absolute'
+      dragImage.style.zIndex = 1000
+      document.body.append(dragImage)
+      console.log("appending clone")
+      dragImage.addEventListener('mouseup', dropPatternListener)
+      clonedYet = true
+    }
+    moveAt(e.pageX, e.pageY)
+  }
+
+  const dropPatternListener = (e) => {
+    document.removeEventListener('mousemove', movePatternListener)
+    document.body.removeChild(dragImage)
+    console.log("removing clone")
+    dragImage.onmouseup = null
+    dragImage = null
+    clonedYet = false
+  }
+
+  document.addEventListener('mousemove', movePatternListener)
+  console.log("move listener added!")
 }
 
 // button event listeners
@@ -196,7 +224,7 @@ document.addEventListener('mouseup', mouseUpListener)
 canvas.addEventListener('mousedown', clickDrawStartListener)
 // handles dragging pattern
 originPattern.addEventListener('mousedown', dragPatternStartListener)
-document.addEventListener('mousemove', movePatternListener)
+originPattern.addEventListener('dragstart', () => false)
 // handles button presses
 startButton.addEventListener('click', startListener)
 resetButton.addEventListener('click', resetListener)
