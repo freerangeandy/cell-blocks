@@ -142,10 +142,10 @@ const moveListener = (e) => {
   }
 }
 
-let clonedYet = false
 const dragPatternStartListener = (e) => {
   let shiftX = e.clientX - originPattern.getBoundingClientRect().left
   let shiftY = e.clientY - originPattern.getBoundingClientRect().top
+  let clonedYet = false
 
   const moveAt = (pageX, pageY) => {
     if (dragImage) {
@@ -158,12 +158,10 @@ const dragPatternStartListener = (e) => {
     if (!clonedYet) {
       dragImage = originPattern.cloneNode(true)
       dragImage.setAttribute('id', 'dragImage')
-
       dragImage.style.position = 'absolute'
       dragImage.style.zIndex = 1000
       document.body.append(dragImage)
       console.log("appending clone")
-      dragImage.addEventListener('mouseup', dropPatternListener)
       clonedYet = true
     }
     moveAt(e.pageX, e.pageY)
@@ -171,15 +169,19 @@ const dragPatternStartListener = (e) => {
 
   const dropPatternListener = (e) => {
     document.removeEventListener('mousemove', movePatternListener)
-    document.body.removeChild(dragImage)
-    console.log("removing clone")
-    dragImage.onmouseup = null
-    dragImage = null
-    clonedYet = false
+    document.removeEventListener('mouseup', dropPatternListener)
+    console.log("remove event listener")
+    if (clonedYet) {
+      document.body.removeChild(dragImage)
+      console.log("removing clone")
+      dragImage = null
+      clonedYet = false
+    }
   }
 
   document.addEventListener('mousemove', movePatternListener)
-  console.log("move listener added!")
+  console.log("add event listener")
+  document.addEventListener('mouseup', dropPatternListener)
 }
 
 // button event listeners
@@ -217,10 +219,9 @@ const randomListener = (e) => {
   paintAllCells(ctx)
 }
 
-// handles drawing/erasing cells in canvas OR when dragging/dropping pattern
+// handles drawing/erasing cells in canvas
 canvas.addEventListener('mousemove', moveListener)
 document.addEventListener('mouseup', mouseUpListener)
-// handles drawing/erasing cells in canvas
 canvas.addEventListener('mousedown', clickDrawStartListener)
 // handles dragging pattern
 originPattern.addEventListener('mousedown', dragPatternStartListener)
