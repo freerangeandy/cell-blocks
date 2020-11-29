@@ -194,6 +194,7 @@ const dragPatternStartListener = (e) => {
     document.removeEventListener('mouseup', dropPatternListener)
     console.log("remove event listener")
     if (clonedYet) {
+      dropPattern(e, shiftX, shiftY)
       document.body.removeChild(dragImage)
       console.log("removing clone")
       dragImage = null
@@ -204,6 +205,20 @@ const dragPatternStartListener = (e) => {
   document.addEventListener('mousemove', movePatternListener)
   console.log("add event listener")
   document.addEventListener('mouseup', dropPatternListener)
+}
+
+const dropPattern = (e, shiftX, shiftY) => {
+  let offsetX = e.clientX - shiftX - canvas.getBoundingClientRect().left
+  let offsetY = e.clientY - shiftY - canvas.getBoundingClientRect().top
+
+  const rowID = Math.floor(offsetY/BOX_WIDTH)
+  const colID = Math.floor(offsetX/BOX_WIDTH)
+  if (isValidCell(rowID, colID)) {
+    const thisCell = gridBoxes[rowID][colID]
+    toggleLife(rowID, colID)
+    paintCell(ctx, thisCell)
+  }
+  console.log(`${rowID}, ${colID}`)
 }
 
 // button event listeners
