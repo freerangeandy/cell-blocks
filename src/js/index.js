@@ -225,12 +225,13 @@ const dropPattern = (e, shiftX, shiftY) => {
   let offsetX = e.clientX - shiftX - canvas.getBoundingClientRect().left
   let offsetY = e.clientY - shiftY - canvas.getBoundingClientRect().top
 
-  const rowID = Math.floor(offsetY/BOX_WIDTH)
-  const colID = Math.floor(offsetX/BOX_WIDTH)
-  if (isValidCell(rowID, colID)) {
-    const thisCell = gridBoxes[rowID][colID]
-    toggleLife(rowID, colID)
-    placePattern(ctx, rowID, colID, GLIDER_PATTERN)
+  const topRow = Math.floor(offsetY/BOX_WIDTH)
+  const leftCol = Math.floor(offsetX/BOX_WIDTH)
+  const botRow = topRow + GLIDER_PATTERN.length - 1
+  const rightCol = leftCol + GLIDER_PATTERN[0].length - 1
+  if (isValidCell(topRow, leftCol) && isValidCell(botRow, rightCol)) {
+    toggleLife(topRow, leftCol)
+    placePattern(ctx, topRow, leftCol, GLIDER_PATTERN)
   }
   console.log(`${rowID}, ${colID}`)
 }
