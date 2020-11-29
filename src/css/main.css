@@ -61,7 +61,7 @@ body {
   justify-content: center;
 }
 
-canvas {
+#mainCanvas {
   border: 3px solid #555555;
   background-color: #fffef6;
 }

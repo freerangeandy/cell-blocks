@@ -1,7 +1,7 @@
 import { CANVAS_WIDTH, CANVAS_HEIGHT, BOX_WIDTH, maxRow, maxCol, RAND_DENSITY, GLIDER_PATTERN } from "./constants.js"
 import Cell from "./Cell"
 
-const canvas = document.querySelector('canvas')
+const canvas = document.getElementById('mainCanvas')
 const ctx = canvas.getContext('2d')
 const xHover = document.getElementById('xHover')
 const yHover = document.getElementById('yHover')
