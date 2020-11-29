@@ -65,3 +65,12 @@ canvas {
   border: 3px solid #555555;
   background-color: #fffef6;
 }
+
+#originPattern {
+  border: 3px solid #555555;
+  background-color: #fffef6;
+}
+
+#dragPattern {
+  border: 3px solid #555555;  
+}

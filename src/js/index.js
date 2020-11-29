@@ -1,4 +1,4 @@
-import { CANVAS_WIDTH, CANVAS_HEIGHT, BOX_WIDTH, maxRow, maxCol, RAND_DENSITY } from "./constants.js"
+import { CANVAS_WIDTH, CANVAS_HEIGHT, BOX_WIDTH, maxRow, maxCol, RAND_DENSITY, GLIDER_PATTERN } from "./constants.js"
 import Cell from "./Cell"
 
 const canvas = document.querySelector('canvas')
@@ -9,12 +9,15 @@ const startButton = document.getElementById('startButton')
 const resetButton = document.getElementById('resetButton')
 const randomButton = document.getElementById('randomButton')
 const originPattern = document.getElementById('originPattern')
+originPattern.setAttribute('width', BOX_WIDTH*3)
+originPattern.setAttribute('height', BOX_WIDTH*3)
 let dragImage = null
 
 let gridBoxes
 const init = () => {
   gridBoxes = blankCellGrid(maxRow, maxCol)
   drawGrid()
+  drawDragPattern(originPattern)
 }
 
 const drawGrid = () => {
@@ -25,6 +28,24 @@ const drawGrid = () => {
       ctx.beginPath()
       ctx.rect(colID*BOX_WIDTH,rowID*BOX_WIDTH,BOX_WIDTH,BOX_WIDTH)
       ctx.stroke()
+    })
+  })
+}
+
+const drawDragPattern = (pattern) => {
+  const patternCtx = pattern.getContext('2d')
+  patternCtx.strokeStyle='#555555'
+  GLIDER_PATTERN.forEach((row, rowID) => {
+    row.forEach((val, colID) => {
+      patternCtx.beginPath()
+      patternCtx.rect(colID*BOX_WIDTH,rowID*BOX_WIDTH,BOX_WIDTH,BOX_WIDTH)
+      patternCtx.stroke()
+      if (val === 1) {
+        patternCtx.beginPath()
+        patternCtx.fillStyle = '#770000'
+        patternCtx.fillRect(colID*BOX_WIDTH+1,rowID*BOX_WIDTH+1,BOX_WIDTH-2,BOX_WIDTH-2)
+        patternCtx.stroke()
+      }
     })
   })
 }
@@ -157,9 +178,10 @@ const dragPatternStartListener = (e) => {
   const movePatternListener = (e) => {
     if (!clonedYet) {
       dragImage = originPattern.cloneNode(true)
-      dragImage.setAttribute('id', 'dragImage')
+      dragImage.setAttribute('id', 'dragPattern')
       dragImage.style.position = 'absolute'
       dragImage.style.zIndex = 1000
+      drawDragPattern(dragImage)
       document.body.append(dragImage)
       console.log("appending clone")
       clonedYet = true
