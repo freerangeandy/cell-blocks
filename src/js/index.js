@@ -121,6 +121,20 @@ const paintAllCells = (ctx) => {
   })
 }
 
+const placePattern = (ctx, topRowID, leftColID, pattern) => {
+  for (let i=0; i < pattern.length; i++) {
+    for (let j=0; j < pattern[0].length; j++) {
+      const [rowID, colID] = [topRowID+i, leftColID+j]
+      const thisCell = gridBoxes[rowID][colID]
+      const patternVal = pattern[i][j]
+      if (thisCell.living != (patternVal === 1)) {
+        toggleLife(rowID, colID)
+        paintCell(ctx, thisCell)
+      }
+    }
+  }
+}
+
 const fadeIn = (painter, ctx, interval) => {
   let opacity = 0
   const fader = setInterval(() => {
@@ -216,7 +230,7 @@ const dropPattern = (e, shiftX, shiftY) => {
   if (isValidCell(rowID, colID)) {
     const thisCell = gridBoxes[rowID][colID]
     toggleLife(rowID, colID)
-    paintCell(ctx, thisCell)
+    placePattern(ctx, rowID, colID, GLIDER_PATTERN)
   }
   console.log(`${rowID}, ${colID}`)
 }
