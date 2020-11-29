@@ -1,18 +1,23 @@
-import { CANVAS_WIDTH, CANVAS_HEIGHT, BOX_WIDTH, maxRow, maxCol, RAND_DENSITY } from "./constants.js"
+import { CANVAS_WIDTH, CANVAS_HEIGHT, BOX_WIDTH, maxRow, maxCol, RAND_DENSITY, GLIDER_PATTERN } from "./constants.js"
 import Cell from "./Cell"
 
-const canvas = document.querySelector('canvas')
+const canvas = document.getElementById('mainCanvas')
 const ctx = canvas.getContext('2d')
 const xHover = document.getElementById('xHover')
 const yHover = document.getElementById('yHover')
 const startButton = document.getElementById('startButton')
 const resetButton = document.getElementById('resetButton')
 const randomButton = document.getElementById('randomButton')
+const originPattern = document.getElementById('originPattern')
+originPattern.setAttribute('width', BOX_WIDTH*3)
+originPattern.setAttribute('height', BOX_WIDTH*3)
+let dragImage = null
 
 let gridBoxes
 const init = () => {
   gridBoxes = blankCellGrid(maxRow, maxCol)
   drawGrid()
+  drawDragPattern(originPattern)
 }
 
 const drawGrid = () => {
@@ -23,6 +28,24 @@ const drawGrid = () => {
       ctx.beginPath()
       ctx.rect(colID*BOX_WIDTH,rowID*BOX_WIDTH,BOX_WIDTH,BOX_WIDTH)
       ctx.stroke()
+    })
+  })
+}
+
+const drawDragPattern = (pattern) => {
+  const patternCtx = pattern.getContext('2d')
+  patternCtx.strokeStyle='#555555'
+  GLIDER_PATTERN.forEach((row, rowID) => {
+    row.forEach((val, colID) => {
+      patternCtx.beginPath()
+      patternCtx.rect(colID*BOX_WIDTH,rowID*BOX_WIDTH,BOX_WIDTH,BOX_WIDTH)
+      patternCtx.stroke()
+      if (val === 1) {
+        patternCtx.beginPath()
+        patternCtx.fillStyle = '#770000'
+        patternCtx.fillRect(colID*BOX_WIDTH+1,rowID*BOX_WIDTH+1,BOX_WIDTH-2,BOX_WIDTH-2)
+        patternCtx.stroke()
+      }
     })
   })
 }
@@ -98,6 +121,20 @@ const paintAllCells = (ctx) => {
   })
 }
 
+const placePattern = (ctx, topRowID, leftColID, pattern) => {
+  for (let i=0; i < pattern.length; i++) {
+    for (let j=0; j < pattern[0].length; j++) {
+      const [rowID, colID] = [topRowID+i, leftColID+j]
+      const thisCell = gridBoxes[rowID][colID]
+      const patternVal = pattern[i][j]
+      if (thisCell.living != (patternVal === 1)) {
+        toggleLife(rowID, colID)
+        paintCell(ctx, thisCell)
+      }
+    }
+  }
+}
+
 const fadeIn = (painter, ctx, interval) => {
   let opacity = 0
   const fader = setInterval(() => {
@@ -112,26 +149,26 @@ const isValidCell = (row, col) => (row>=0 && row<maxRow && col>=0 && col<maxCol)
 const getFillColor = (thisCell) => thisCell.living ? '#770000' : 'white'
 
 // event handlers
-let mouseIsDown = false
+let drawingCells = false
 let eraseMode = false
-const clickDragStartListener = (e) => {
+const clickDrawStartListener = (e) => {
   const [rowID, colID] = getRowColID(e)
   const thisCell = gridBoxes[rowID][colID]
   eraseMode = thisCell.living ? true : false
-  mouseIsDown = true
+  drawingCells = true
   toggleLife(rowID, colID)
   paintCell(ctx, thisCell)
 }
 
-const clickDragEndListener = (e) => {
-  mouseIsDown = false
+const mouseUpListener = (e) => {
+  drawingCells = false
 }
 
 const moveListener = (e) => {
   const [rowID, colID] = getRowColID(e)
   rowHover.innerHTML = rowID
   colHover.innerHTML = colID
-  if (mouseIsDown && isValidCell(rowID, colID)) {
+  if (drawingCells && isValidCell(rowID, colID)) {
     const thisCell = gridBoxes[rowID][colID]
     if (eraseMode === thisCell.living){
       toggleLife(rowID, colID)
@@ -140,6 +177,66 @@ const moveListener = (e) => {
   }
 }
 
+const dragPatternStartListener = (e) => {
+  let shiftX = e.clientX - originPattern.getBoundingClientRect().left
+  let shiftY = e.clientY - originPattern.getBoundingClientRect().top
+  let clonedYet = false
+
+  const moveAt = (pageX, pageY) => {
+    if (dragImage) {
+      dragImage.style.left = pageX - shiftX + 'px'
+      dragImage.style.top = pageY - shiftY + 'px'
+    }
+  }
+
+  const movePatternListener = (e) => {
+    if (!clonedYet) {
+      dragImage = originPattern.cloneNode(true)
+      dragImage.setAttribute('id', 'dragPattern')
+      dragImage.style.position = 'absolute'
+      dragImage.style.zIndex = 1000
+      drawDragPattern(dragImage)
+      document.body.append(dragImage)
+      // console.log("appending clone")
+      clonedYet = true
+    }
+    moveAt(e.pageX, e.pageY)
+  }
+
+  const dropPatternListener = (e) => {
+    document.removeEventListener('mousemove', movePatternListener)
+    document.removeEventListener('mouseup', dropPatternListener)
+    // console.log("remove event listener")
+    if (clonedYet) {
+      dropPattern(e, shiftX, shiftY)
+      document.body.removeChild(dragImage)
+      // console.log("removing clone")
+      dragImage = null
+      clonedYet = false
+    }
+  }
+
+  document.addEventListener('mousemove', movePatternListener)
+  // console.log("add event listener")
+  document.addEventListener('mouseup', dropPatternListener)
+}
+
+const dropPattern = (e, shiftX, shiftY) => {
+  let offsetX = e.clientX - shiftX - canvas.getBoundingClientRect().left
+  let offsetY = e.clientY - shiftY - canvas.getBoundingClientRect().top
+
+  const topRow = Math.floor(offsetY/BOX_WIDTH)
+  const leftCol = Math.floor(offsetX/BOX_WIDTH)
+  const botRow = topRow + GLIDER_PATTERN.length - 1
+  const rightCol = leftCol + GLIDER_PATTERN[0].length - 1
+  if (isValidCell(topRow, leftCol) && isValidCell(botRow, rightCol)) {
+    toggleLife(topRow, leftCol)
+    placePattern(ctx, topRow, leftCol, GLIDER_PATTERN)
+  }
+  // console.log(`top left corner: ${topRow}, ${leftCol}`)
+}
+
+// button event listeners
 let isRunning = false
 let animator
 const startListener = (e) => {
@@ -174,17 +271,22 @@ const randomListener = (e) => {
   paintAllCells(ctx)
 }
 
+// handles drawing/erasing cells in canvas
 canvas.addEventListener('mousemove', moveListener)
+document.addEventListener('mouseup', mouseUpListener)
+canvas.addEventListener('mousedown', clickDrawStartListener)
+// handles dragging pattern
+originPattern.addEventListener('mousedown', dragPatternStartListener)
+originPattern.addEventListener('dragstart', () => false)
+// handles button presses
+startButton.addEventListener('click', startListener)
+resetButton.addEventListener('click', resetListener)
+randomButton.addEventListener('click', randomListener)
+// reset cell ID display upon leaving canvas
 canvas.addEventListener('mouseout',() => {
   rowHover.innerHTML = '---'
   colHover.innerHTML = '---'
 })
-canvas.addEventListener('mousedown', clickDragStartListener)
-document.addEventListener('mouseup', clickDragEndListener)
-
-startButton.addEventListener('click', startListener)
-resetButton.addEventListener('click', resetListener)
-randomButton.addEventListener('click', randomListener)
 
 // when browser loads script
 init()
