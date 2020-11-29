@@ -197,7 +197,7 @@ const dragPatternStartListener = (e) => {
       dragImage.style.zIndex = 1000
       drawDragPattern(dragImage)
       document.body.append(dragImage)
-      console.log("appending clone")
+      // console.log("appending clone")
       clonedYet = true
     }
     moveAt(e.pageX, e.pageY)
@@ -206,18 +206,18 @@ const dragPatternStartListener = (e) => {
   const dropPatternListener = (e) => {
     document.removeEventListener('mousemove', movePatternListener)
     document.removeEventListener('mouseup', dropPatternListener)
-    console.log("remove event listener")
+    // console.log("remove event listener")
     if (clonedYet) {
       dropPattern(e, shiftX, shiftY)
       document.body.removeChild(dragImage)
-      console.log("removing clone")
+      // console.log("removing clone")
       dragImage = null
       clonedYet = false
     }
   }
 
   document.addEventListener('mousemove', movePatternListener)
-  console.log("add event listener")
+  // console.log("add event listener")
   document.addEventListener('mouseup', dropPatternListener)
 }
 
@@ -233,7 +233,7 @@ const dropPattern = (e, shiftX, shiftY) => {
     toggleLife(topRow, leftCol)
     placePattern(ctx, topRow, leftCol, GLIDER_PATTERN)
   }
-  console.log(`${rowID}, ${colID}`)
+  // console.log(`top left corner: ${topRow}, ${leftCol}`)
 }
 
 // button event listeners
