@@ -20,7 +20,7 @@ let gridBoxes
 const init = () => {
   gridBoxes = blankCellGrid(maxRow, maxCol)
   drawGrid()
-  drawDragPattern(originPattern)
+  drawDragPattern(originPattern, GLIDER_PATTERN)
 }
 
 const drawGrid = () => {
@@ -35,10 +35,10 @@ const drawGrid = () => {
   })
 }
 
-const drawDragPattern = (pattern) => {
-  const patternCtx = pattern.getContext('2d')
+const drawDragPattern = (patternCanvas, patternScheme) => {
+  const patternCtx = patternCanvas.getContext('2d')
   patternCtx.strokeStyle='#555555'
-  GLIDER_PATTERN.forEach((row, rowID) => {
+  patternScheme.forEach((row, rowID) => {
     row.forEach((val, colID) => {
       patternCtx.beginPath()
       patternCtx.rect(colID*BOX_WIDTH,rowID*BOX_WIDTH,BOX_WIDTH,BOX_WIDTH)
@@ -135,7 +135,7 @@ const dragPatternStartListener = (e) => {
       dragImage.setAttribute('id', 'dragPattern')
       dragImage.style.position = 'absolute'
       dragImage.style.zIndex = 1000
-      drawDragPattern(dragImage)
+      drawDragPattern(dragImage, GLIDER_PATTERN)
       document.body.append(dragImage)
       // console.log("appending clone")
       clonedYet = true
