@@ -1,5 +1,5 @@
 import { CANVAS_WIDTH, CANVAS_HEIGHT, BOX_WIDTH, maxRow, maxCol, RAND_DENSITY, GLIDER_PATTERN } from "./constants.js"
-import { blankCellGrid, getRowColID } from "./utilities.js"
+import { blankCellGrid, getRowColID, fadeIn, isValidCell, getFillColor } from "./utilities.js"
 import Cell from "./Cell"
 
 const canvas = document.getElementById('mainCanvas')
@@ -127,19 +127,6 @@ const placePattern = (ctx, topRowID, leftColID, pattern) => {
     }
   }
 }
-
-const fadeIn = (painter, ctx, interval) => {
-  let opacity = 0
-  const fader = setInterval(() => {
-    if (opacity >= 1) clearInterval(fader)
-    ctx.globalAlpha = opacity
-    painter()
-    opacity += 0.1
-  }, interval)
-}
-
-const isValidCell = (row, col) => (row>=0 && row<maxRow && col>=0 && col<maxCol)
-const getFillColor = (thisCell) => thisCell.living ? '#770000' : 'white'
 
 // event handlers
 let drawingCells = false
