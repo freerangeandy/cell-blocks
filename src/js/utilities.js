@@ -47,3 +47,17 @@ export const toggleLife = (cell, grid) => {
   cell.living = !cell.living
   updateNeighborsLivingNeighbors(cell, grid)
 }
+
+export const placePattern = (ctx, grid, topRowID, leftColID, pattern) => {
+  for (let i=0; i < pattern.length; i++) {
+    for (let j=0; j < pattern[0].length; j++) {
+      const [rowID, colID] = [topRowID+i, leftColID+j]
+      const thisCell = grid[rowID][colID]
+      const patternVal = pattern[i][j]
+      if (thisCell.living != (patternVal === 1)) {
+        toggleLife(thisCell, grid)
+        paintCell(ctx, thisCell)
+      }
+    }
+  }
+}

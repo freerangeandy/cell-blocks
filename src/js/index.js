@@ -1,7 +1,7 @@
 import { CANVAS_WIDTH, CANVAS_HEIGHT, BOX_WIDTH, maxRow, maxCol, RAND_DENSITY,
         GLIDER_PATTERN } from "./constants.js"
 import { blankCellGrid, getRowColID, fadeIn, paintCell, paintAllCells, isValidCell,
-        getFillColor, updateNeighborsLivingNeighbors, toggleLife } from "./utilities.js"
+        getFillColor, updateNeighborsLivingNeighbors, toggleLife, placePattern } from "./utilities.js"
 import Cell from "./Cell"
 
 const canvas = document.getElementById('mainCanvas')
@@ -88,21 +88,6 @@ const animate = () => {
   fadeIn(() => paintAllCells(ctx, gridBoxes), ctx, 8)
 }
 
-// utilities
-const placePattern = (ctx, topRowID, leftColID, pattern) => {
-  for (let i=0; i < pattern.length; i++) {
-    for (let j=0; j < pattern[0].length; j++) {
-      const [rowID, colID] = [topRowID+i, leftColID+j]
-      const thisCell = gridBoxes[rowID][colID]
-      const patternVal = pattern[i][j]
-      if (thisCell.living != (patternVal === 1)) {
-        toggleLife(thisCell, gridBoxes)
-        paintCell(ctx, thisCell)
-      }
-    }
-  }
-}
-
 // event handlers
 let drawingCells = false
 let eraseMode = false
@@ -185,7 +170,7 @@ const dropPattern = (e, shiftX, shiftY) => {
   const botRow = topRow + GLIDER_PATTERN.length - 1
   const rightCol = leftCol + GLIDER_PATTERN[0].length - 1
   if (isValidCell(topRow, leftCol) && isValidCell(botRow, rightCol)) {
-    placePattern(ctx, topRow, leftCol, GLIDER_PATTERN)
+    placePattern(ctx, gridBoxes, topRow, leftCol, GLIDER_PATTERN)
   }
   // console.log(`top left corner: ${topRow}, ${leftCol}`)
 }
