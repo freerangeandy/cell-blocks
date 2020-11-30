@@ -1,4 +1,8 @@
-import { CANVAS_WIDTH, CANVAS_HEIGHT, BOX_WIDTH, maxRow, maxCol, RAND_DENSITY, GLIDER_PATTERN } from "./constants.js"
+import { CANVAS_WIDTH, CANVAS_HEIGHT, BOX_WIDTH, maxRow, maxCol, RAND_DENSITY,
+        GLIDER_PATTERN } from "./constants.js"
+import { blankCellGrid, getRowColID, fadeIn, paintCell, paintAllCells, isValidCell,
+        getFillColor, updateNeighborsLivingNeighbors, toggleLife, placePattern,
+        drawDragPattern, drawGrid, randomCellGrid } from "./utilities.js"
 import Cell from "./Cell"
 
 const canvas = document.getElementById('mainCanvas')
@@ -9,57 +13,14 @@ const startButton = document.getElementById('startButton')
 const resetButton = document.getElementById('resetButton')
 const randomButton = document.getElementById('randomButton')
 const originPattern = document.getElementById('originPattern')
-originPattern.setAttribute('width', BOX_WIDTH*3)
-originPattern.setAttribute('height', BOX_WIDTH*3)
-let dragImage = null
 
 let gridBoxes
 const init = () => {
   gridBoxes = blankCellGrid(maxRow, maxCol)
-  drawGrid()
-  drawDragPattern(originPattern)
-}
-
-const drawGrid = () => {
-  ctx.strokeStyle='#555555'
-  ctx.clearRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT)
-  gridBoxes.forEach((row, rowID) => {
-    row.forEach((_, colID) => {
-      ctx.beginPath()
-      ctx.rect(colID*BOX_WIDTH,rowID*BOX_WIDTH,BOX_WIDTH,BOX_WIDTH)
-      ctx.stroke()
-    })
-  })
-}
-
-const drawDragPattern = (pattern) => {
-  const patternCtx = pattern.getContext('2d')
-  patternCtx.strokeStyle='#555555'
-  GLIDER_PATTERN.forEach((row, rowID) => {
-    row.forEach((val, colID) => {
-      patternCtx.beginPath()
-      patternCtx.rect(colID*BOX_WIDTH,rowID*BOX_WIDTH,BOX_WIDTH,BOX_WIDTH)
-      patternCtx.stroke()
-      if (val === 1) {
-        patternCtx.beginPath()
-        patternCtx.fillStyle = '#770000'
-        patternCtx.fillRect(colID*BOX_WIDTH+1,rowID*BOX_WIDTH+1,BOX_WIDTH-2,BOX_WIDTH-2)
-        patternCtx.stroke()
-      }
-    })
-  })
-}
-
-// tie this action to flipping of a cell state as close to possible
-const updateNeighborsLivingNeighbors = (cell) => {
-  const updateVal = cell.living ? 1 : -1
-  cell.neighbors.forEach(([i, j]) => { gridBoxes[i][j].livingNeighbors += updateVal })
-}
-
-const toggleLife = (i, j) => {
-  const thisCell = gridBoxes[i][j]
-  thisCell.living = !thisCell.living
-  updateNeighborsLivingNeighbors(thisCell)
+  drawGrid(ctx, gridBoxes)
+  originPattern.setAttribute('width', BOX_WIDTH*3)
+  originPattern.setAttribute('height', BOX_WIDTH*3)
+  drawDragPattern(originPattern, GLIDER_PATTERN)
 }
 
 // go through the conway life cycle:
@@ -70,7 +31,6 @@ const toggleLife = (i, j) => {
 //    b) updateNeighborsLivingNeighbors
 //    c) nullify stored next state
 // end cycle, repeat with next animation frame
-
 const setNextStates = () => {
   gridBoxes.forEach((row, rowID) => {
     row.forEach((thisCell, colID) => {
@@ -84,8 +44,8 @@ const applyNextStates = () => {
     row.forEach((thisCell, colID) => {
       const stateFlip = thisCell.living != thisCell.nextState
       thisCell.advanceState() // conway rules
-      if (stateFlip){
-        updateNeighborsLivingNeighbors(thisCell)
+      if (stateFlip) {
+        updateNeighborsLivingNeighbors(thisCell, gridBoxes)
       }
     })
   })
@@ -94,59 +54,8 @@ const applyNextStates = () => {
 const animate = () => {
   setNextStates()
   applyNextStates()
-  fadeIn(() => paintAllCells(ctx), ctx, 8)
+  fadeIn(() => paintAllCells(ctx, gridBoxes), ctx, 8)
 }
-
-// utilities
-const blankCellGrid = (w, h) => [...Array(w)].map((_,i)=>[...Array(h)].map((_,j)=>new Cell(i,j)))
-
-const getRowColID = (e) => {
-  const rowID = Math.floor(e.offsetY/BOX_WIDTH)
-  const colID = Math.floor(e.offsetX/BOX_WIDTH)
-  return [rowID, colID]
-}
-
-const paintCell = (ctx, thisCell) => {
-  ctx.beginPath()
-  ctx.fillStyle = getFillColor(thisCell)
-  ctx.fillRect(thisCell.col*BOX_WIDTH+1,thisCell.row*BOX_WIDTH+1,BOX_WIDTH-2,BOX_WIDTH-2)
-  ctx.stroke()
-}
-
-const paintAllCells = (ctx) => {
-  gridBoxes.forEach((row, rowID) => {
-    row.forEach((thisCell, colID) => {
-      paintCell(ctx, thisCell)
-    })
-  })
-}
-
-const placePattern = (ctx, topRowID, leftColID, pattern) => {
-  for (let i=0; i < pattern.length; i++) {
-    for (let j=0; j < pattern[0].length; j++) {
-      const [rowID, colID] = [topRowID+i, leftColID+j]
-      const thisCell = gridBoxes[rowID][colID]
-      const patternVal = pattern[i][j]
-      if (thisCell.living != (patternVal === 1)) {
-        toggleLife(rowID, colID)
-        paintCell(ctx, thisCell)
-      }
-    }
-  }
-}
-
-const fadeIn = (painter, ctx, interval) => {
-  let opacity = 0
-  const fader = setInterval(() => {
-    if (opacity >= 1) clearInterval(fader)
-    ctx.globalAlpha = opacity
-    painter()
-    opacity += 0.1
-  }, interval)
-}
-
-const isValidCell = (row, col) => (row>=0 && row<maxRow && col>=0 && col<maxCol)
-const getFillColor = (thisCell) => thisCell.living ? '#770000' : 'white'
 
 // event handlers
 let drawingCells = false
@@ -154,9 +63,9 @@ let eraseMode = false
 const clickDrawStartListener = (e) => {
   const [rowID, colID] = getRowColID(e)
   const thisCell = gridBoxes[rowID][colID]
-  eraseMode = thisCell.living ? true : false
+  eraseMode = thisCell.living
   drawingCells = true
-  toggleLife(rowID, colID)
+  toggleLife(thisCell, gridBoxes)
   paintCell(ctx, thisCell)
 }
 
@@ -170,13 +79,14 @@ const moveListener = (e) => {
   colHover.innerHTML = colID
   if (drawingCells && isValidCell(rowID, colID)) {
     const thisCell = gridBoxes[rowID][colID]
-    if (eraseMode === thisCell.living){
-      toggleLife(rowID, colID)
+    if (eraseMode === thisCell.living) {
+      toggleLife(thisCell, gridBoxes)
       paintCell(ctx, thisCell)
     }
   }
 }
 
+let dragImage = null
 const dragPatternStartListener = (e) => {
   let shiftX = e.clientX - originPattern.getBoundingClientRect().left
   let shiftY = e.clientY - originPattern.getBoundingClientRect().top
@@ -195,9 +105,8 @@ const dragPatternStartListener = (e) => {
       dragImage.setAttribute('id', 'dragPattern')
       dragImage.style.position = 'absolute'
       dragImage.style.zIndex = 1000
-      drawDragPattern(dragImage)
+      drawDragPattern(dragImage, GLIDER_PATTERN)
       document.body.append(dragImage)
-      // console.log("appending clone")
       clonedYet = true
     }
     moveAt(e.pageX, e.pageY)
@@ -206,18 +115,15 @@ const dragPatternStartListener = (e) => {
   const dropPatternListener = (e) => {
     document.removeEventListener('mousemove', movePatternListener)
     document.removeEventListener('mouseup', dropPatternListener)
-    // console.log("remove event listener")
     if (clonedYet) {
       dropPattern(e, shiftX, shiftY)
       document.body.removeChild(dragImage)
-      // console.log("removing clone")
       dragImage = null
       clonedYet = false
     }
   }
 
   document.addEventListener('mousemove', movePatternListener)
-  // console.log("add event listener")
   document.addEventListener('mouseup', dropPatternListener)
 }
 
@@ -230,10 +136,8 @@ const dropPattern = (e, shiftX, shiftY) => {
   const botRow = topRow + GLIDER_PATTERN.length - 1
   const rightCol = leftCol + GLIDER_PATTERN[0].length - 1
   if (isValidCell(topRow, leftCol) && isValidCell(botRow, rightCol)) {
-    toggleLife(topRow, leftCol)
-    placePattern(ctx, topRow, leftCol, GLIDER_PATTERN)
+    placePattern(ctx, gridBoxes, topRow, leftCol, GLIDER_PATTERN)
   }
-  // console.log(`top left corner: ${topRow}, ${leftCol}`)
 }
 
 // button event listeners
@@ -256,19 +160,19 @@ const startListener = (e) => {
 
 const resetListener = (e) => {
   gridBoxes = blankCellGrid(maxRow, maxCol)
-  paintAllCells(ctx)
+  paintAllCells(ctx, gridBoxes)
 }
 
 const randomListener = (e) => {
-  const seedArray = [...Array(maxRow)].map(row => [...Array(maxCol)].map(cell => Math.random() < RAND_DENSITY))
+  const seedArray = randomCellGrid(maxRow, maxCol, RAND_DENSITY)
   gridBoxes.forEach((row, rowID) => {
     row.forEach((thisCell, colID) => {
-      if (thisCell.living !== seedArray[rowID][colID]){
-        toggleLife(rowID, colID)
+      if (thisCell.living !== seedArray[rowID][colID]) {
+        toggleLife(thisCell, gridBoxes)
       }
     })
   })
-  paintAllCells(ctx)
+  paintAllCells(ctx, gridBoxes)
 }
 
 // handles drawing/erasing cells in canvas
