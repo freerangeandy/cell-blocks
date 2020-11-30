@@ -164,7 +164,7 @@ const resetListener = (e) => {
 }
 
 const randomListener = (e) => {
-  const seedArray = randomCellGrid(RAND_DENSITY)
+  const seedArray = randomCellGrid(maxRow, maxCol, RAND_DENSITY)
   gridBoxes.forEach((row, rowID) => {
     row.forEach((thisCell, colID) => {
       if (thisCell.living !== seedArray[rowID][colID]) {

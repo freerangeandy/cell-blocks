@@ -15,7 +15,7 @@ export const drawGrid = (ctx, gridBoxes) => {
 }
 
 export const blankCellGrid = (w, h) => [...Array(w)].map((_,i)=>[...Array(h)].map((_,j)=>new Cell(i,j)))
-export const randomCellGrid = (density) => [...Array(maxRow)].map(row => [...Array(maxCol)].map(cell => Math.random() < density))
+export const randomCellGrid = (w, h, density) => [...Array(w)].map(row=>[...Array(h)].map(cell=>Math.random()<density))
 
 // pure helper functions
 export const isValidCell = (row, col) => (row>=0 && row<maxRow && col>=0 && col<maxCol)
