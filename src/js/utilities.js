@@ -1,7 +1,24 @@
-import { BOX_WIDTH, maxRow, maxCol } from './constants.js'
+import { CANVAS_WIDTH, CANVAS_HEIGHT, BOX_WIDTH, maxRow, maxCol } from './constants.js'
 import Cell from "./Cell"
 
+// set initial state
+export const drawGrid = (ctx, gridBoxes) => {
+  ctx.strokeStyle='#555555'
+  ctx.clearRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT)
+  gridBoxes.forEach((row, rowID) => {
+    row.forEach((_, colID) => {
+      ctx.beginPath()
+      ctx.rect(colID*BOX_WIDTH,rowID*BOX_WIDTH,BOX_WIDTH,BOX_WIDTH)
+      ctx.stroke()
+    })
+  })
+}
+
 export const blankCellGrid = (w, h) => [...Array(w)].map((_,i)=>[...Array(h)].map((_,j)=>new Cell(i,j)))
+
+// pure helper functions
+export const isValidCell = (row, col) => (row>=0 && row<maxRow && col>=0 && col<maxCol)
+export const getFillColor = (thisCell) => thisCell.living ? '#770000' : 'white'
 
 export const getRowColID = (e) => {
   const rowID = Math.floor(e.offsetY/BOX_WIDTH)
@@ -9,6 +26,7 @@ export const getRowColID = (e) => {
   return [rowID, colID]
 }
 
+// update/paint cells during lifecycle
 export const fadeIn = (painter, ctx, interval) => {
   let opacity = 0
   const fader = setInterval(() => {
@@ -34,10 +52,6 @@ export const paintAllCells = (ctx, grid) => {
   })
 }
 
-export const isValidCell = (row, col) => (row>=0 && row<maxRow && col>=0 && col<maxCol)
-export const getFillColor = (thisCell) => thisCell.living ? '#770000' : 'white'
-
-// tie this action to flipping of a cell state as close to possible
 export const updateNeighborsLivingNeighbors = (cell, grid) => {
   const updateVal = cell.living ? 1 : -1
   cell.neighbors.forEach(([i, j]) => { grid[i][j].livingNeighbors += updateVal })
@@ -48,7 +62,7 @@ export const toggleLife = (cell, grid) => {
   updateNeighborsLivingNeighbors(cell, grid)
 }
 
-// for dragging/dropping patterns
+// drag/drop patterns onto canvas
 export const drawDragPattern = (patternCanvas, patternScheme) => {
   const patternCtx = patternCanvas.getContext('2d')
   patternCtx.strokeStyle='#555555'

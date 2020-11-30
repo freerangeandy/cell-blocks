@@ -2,7 +2,7 @@ import { CANVAS_WIDTH, CANVAS_HEIGHT, BOX_WIDTH, maxRow, maxCol, RAND_DENSITY,
         GLIDER_PATTERN } from "./constants.js"
 import { blankCellGrid, getRowColID, fadeIn, paintCell, paintAllCells, isValidCell,
         getFillColor, updateNeighborsLivingNeighbors, toggleLife, placePattern,
-        drawDragPattern } from "./utilities.js"
+        drawDragPattern, drawGrid } from "./utilities.js"
 import Cell from "./Cell"
 
 const canvas = document.getElementById('mainCanvas')
@@ -20,20 +20,8 @@ let dragImage = null
 let gridBoxes
 const init = () => {
   gridBoxes = blankCellGrid(maxRow, maxCol)
-  drawGrid()
+  drawGrid(ctx, gridBoxes)
   drawDragPattern(originPattern, GLIDER_PATTERN)
-}
-
-const drawGrid = () => {
-  ctx.strokeStyle='#555555'
-  ctx.clearRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT)
-  gridBoxes.forEach((row, rowID) => {
-    row.forEach((_, colID) => {
-      ctx.beginPath()
-      ctx.rect(colID*BOX_WIDTH,rowID*BOX_WIDTH,BOX_WIDTH,BOX_WIDTH)
-      ctx.stroke()
-    })
-  })
 }
 
 // go through the conway life cycle:
