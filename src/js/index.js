@@ -1,4 +1,5 @@
 import { CANVAS_WIDTH, CANVAS_HEIGHT, BOX_WIDTH, maxRow, maxCol, RAND_DENSITY, GLIDER_PATTERN } from "./constants.js"
+import { blankCellGrid, getRowColID } from "./utilities.js"
 import Cell from "./Cell"
 
 const canvas = document.getElementById('mainCanvas')
@@ -98,14 +99,6 @@ const animate = () => {
 }
 
 // utilities
-const blankCellGrid = (w, h) => [...Array(w)].map((_,i)=>[...Array(h)].map((_,j)=>new Cell(i,j)))
-
-const getRowColID = (e) => {
-  const rowID = Math.floor(e.offsetY/BOX_WIDTH)
-  const colID = Math.floor(e.offsetX/BOX_WIDTH)
-  return [rowID, colID]
-}
-
 const paintCell = (ctx, thisCell) => {
   ctx.beginPath()
   ctx.fillStyle = getFillColor(thisCell)
