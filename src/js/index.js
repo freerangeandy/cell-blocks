@@ -13,14 +13,13 @@ const startButton = document.getElementById('startButton')
 const resetButton = document.getElementById('resetButton')
 const randomButton = document.getElementById('randomButton')
 const originPattern = document.getElementById('originPattern')
-originPattern.setAttribute('width', BOX_WIDTH*3)
-originPattern.setAttribute('height', BOX_WIDTH*3)
-let dragImage = null
 
 let gridBoxes
 const init = () => {
   gridBoxes = blankCellGrid(maxRow, maxCol)
   drawGrid(ctx, gridBoxes)
+  originPattern.setAttribute('width', BOX_WIDTH*3)
+  originPattern.setAttribute('height', BOX_WIDTH*3)
   drawDragPattern(originPattern, GLIDER_PATTERN)
 }
 
@@ -87,6 +86,7 @@ const moveListener = (e) => {
   }
 }
 
+let dragImage = null
 const dragPatternStartListener = (e) => {
   let shiftX = e.clientX - originPattern.getBoundingClientRect().left
   let shiftY = e.clientY - originPattern.getBoundingClientRect().top
