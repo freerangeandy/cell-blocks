@@ -19,5 +19,20 @@ export const fadeIn = (painter, ctx, interval) => {
   }, interval)
 }
 
+export const paintCell = (ctx, thisCell) => {
+  ctx.beginPath()
+  ctx.fillStyle = getFillColor(thisCell)
+  ctx.fillRect(thisCell.col*BOX_WIDTH+1,thisCell.row*BOX_WIDTH+1,BOX_WIDTH-2,BOX_WIDTH-2)
+  ctx.stroke()
+}
+
+export const paintAllCells = (ctx, grid) => {
+  grid.forEach((row, rowID) => {
+    row.forEach((thisCell, colID) => {
+      paintCell(ctx, thisCell)
+    })
+  })
+}
+
 export const isValidCell = (row, col) => (row>=0 && row<maxRow && col>=0 && col<maxCol)
 export const getFillColor = (thisCell) => thisCell.living ? '#770000' : 'white'

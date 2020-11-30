@@ -1,5 +1,5 @@
 import { CANVAS_WIDTH, CANVAS_HEIGHT, BOX_WIDTH, maxRow, maxCol, RAND_DENSITY, GLIDER_PATTERN } from "./constants.js"
-import { blankCellGrid, getRowColID, fadeIn, isValidCell, getFillColor } from "./utilities.js"
+import { blankCellGrid, getRowColID, fadeIn, paintCell, paintAllCells, isValidCell, getFillColor } from "./utilities.js"
 import Cell from "./Cell"
 
 const canvas = document.getElementById('mainCanvas')
@@ -99,21 +99,6 @@ const animate = () => {
 }
 
 // utilities
-const paintCell = (ctx, thisCell) => {
-  ctx.beginPath()
-  ctx.fillStyle = getFillColor(thisCell)
-  ctx.fillRect(thisCell.col*BOX_WIDTH+1,thisCell.row*BOX_WIDTH+1,BOX_WIDTH-2,BOX_WIDTH-2)
-  ctx.stroke()
-}
-
-const paintAllCells = (ctx, grid) => {
-  grid.forEach((row, rowID) => {
-    row.forEach((thisCell, colID) => {
-      paintCell(ctx, thisCell)
-    })
-  })
-}
-
 const placePattern = (ctx, topRowID, leftColID, pattern) => {
   for (let i=0; i < pattern.length; i++) {
     for (let j=0; j < pattern[0].length; j++) {
