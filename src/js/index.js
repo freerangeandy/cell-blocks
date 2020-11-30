@@ -2,7 +2,7 @@ import { CANVAS_WIDTH, CANVAS_HEIGHT, BOX_WIDTH, maxRow, maxCol, RAND_DENSITY,
         GLIDER_PATTERN } from "./constants.js"
 import { blankCellGrid, getRowColID, fadeIn, paintCell, paintAllCells, isValidCell,
         getFillColor, updateNeighborsLivingNeighbors, toggleLife, placePattern,
-        drawDragPattern, drawGrid } from "./utilities.js"
+        drawDragPattern, drawGrid, randomCellGrid } from "./utilities.js"
 import Cell from "./Cell"
 
 const canvas = document.getElementById('mainCanvas')
@@ -32,7 +32,6 @@ const init = () => {
 //    b) updateNeighborsLivingNeighbors
 //    c) nullify stored next state
 // end cycle, repeat with next animation frame
-
 const setNextStates = () => {
   gridBoxes.forEach((row, rowID) => {
     row.forEach((thisCell, colID) => {
@@ -46,7 +45,7 @@ const applyNextStates = () => {
     row.forEach((thisCell, colID) => {
       const stateFlip = thisCell.living != thisCell.nextState
       thisCell.advanceState() // conway rules
-      if (stateFlip){
+      if (stateFlip) {
         updateNeighborsLivingNeighbors(thisCell, gridBoxes)
       }
     })
@@ -81,7 +80,7 @@ const moveListener = (e) => {
   colHover.innerHTML = colID
   if (drawingCells && isValidCell(rowID, colID)) {
     const thisCell = gridBoxes[rowID][colID]
-    if (eraseMode === thisCell.living){
+    if (eraseMode === thisCell.living) {
       toggleLife(thisCell, gridBoxes)
       paintCell(ctx, thisCell)
     }
@@ -108,7 +107,6 @@ const dragPatternStartListener = (e) => {
       dragImage.style.zIndex = 1000
       drawDragPattern(dragImage, GLIDER_PATTERN)
       document.body.append(dragImage)
-      // console.log("appending clone")
       clonedYet = true
     }
     moveAt(e.pageX, e.pageY)
@@ -117,18 +115,15 @@ const dragPatternStartListener = (e) => {
   const dropPatternListener = (e) => {
     document.removeEventListener('mousemove', movePatternListener)
     document.removeEventListener('mouseup', dropPatternListener)
-    // console.log("remove event listener")
     if (clonedYet) {
       dropPattern(e, shiftX, shiftY)
       document.body.removeChild(dragImage)
-      // console.log("removing clone")
       dragImage = null
       clonedYet = false
     }
   }
 
   document.addEventListener('mousemove', movePatternListener)
-  // console.log("add event listener")
   document.addEventListener('mouseup', dropPatternListener)
 }
 
@@ -143,7 +138,6 @@ const dropPattern = (e, shiftX, shiftY) => {
   if (isValidCell(topRow, leftCol) && isValidCell(botRow, rightCol)) {
     placePattern(ctx, gridBoxes, topRow, leftCol, GLIDER_PATTERN)
   }
-  // console.log(`top left corner: ${topRow}, ${leftCol}`)
 }
 
 // button event listeners
@@ -170,10 +164,10 @@ const resetListener = (e) => {
 }
 
 const randomListener = (e) => {
-  const seedArray = [...Array(maxRow)].map(row => [...Array(maxCol)].map(cell => Math.random() < RAND_DENSITY))
+  const seedArray = randomCellGrid(RAND_DENSITY)
   gridBoxes.forEach((row, rowID) => {
     row.forEach((thisCell, colID) => {
-      if (thisCell.living !== seedArray[rowID][colID]){
+      if (thisCell.living !== seedArray[rowID][colID]) {
         toggleLife(thisCell, gridBoxes)
       }
     })
