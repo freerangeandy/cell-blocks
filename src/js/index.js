@@ -1,4 +1,4 @@
-import { CANVAS_WIDTH, CANVAS_HEIGHT, BOX_WIDTH, maxRow, maxCol, RAND_DENSITY, GLIDER_PATTERN } from "./constants.js"
+import { CANVAS_WIDTH, CANVAS_HEIGHT, BOX_WIDTH, RAND_DENSITY, GLIDER_PATTERN } from "./constants.js"
 import Cell from "./Cell"
 
 const canvas = document.getElementById('mainCanvas')
@@ -13,6 +13,8 @@ originPattern.setAttribute('width', BOX_WIDTH*3)
 originPattern.setAttribute('height', BOX_WIDTH*3)
 let dragImage = null
 
+const maxRow = CANVAS_HEIGHT/BOX_WIDTH
+const maxCol = CANVAS_WIDTH/BOX_WIDTH
 let gridBoxes
 const init = () => {
   gridBoxes = blankCellGrid(maxRow, maxCol)
