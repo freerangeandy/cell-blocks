@@ -48,6 +48,25 @@ export const toggleLife = (cell, grid) => {
   updateNeighborsLivingNeighbors(cell, grid)
 }
 
+// for dragging/dropping patterns
+export const drawDragPattern = (patternCanvas, patternScheme) => {
+  const patternCtx = patternCanvas.getContext('2d')
+  patternCtx.strokeStyle='#555555'
+  patternScheme.forEach((row, rowID) => {
+    row.forEach((val, colID) => {
+      patternCtx.beginPath()
+      patternCtx.rect(colID*BOX_WIDTH,rowID*BOX_WIDTH,BOX_WIDTH,BOX_WIDTH)
+      patternCtx.stroke()
+      if (val === 1) {
+        patternCtx.beginPath()
+        patternCtx.fillStyle = '#770000'
+        patternCtx.fillRect(colID*BOX_WIDTH+1,rowID*BOX_WIDTH+1,BOX_WIDTH-2,BOX_WIDTH-2)
+        patternCtx.stroke()
+      }
+    })
+  })
+}
+
 export const placePattern = (ctx, grid, topRowID, leftColID, pattern) => {
   for (let i=0; i < pattern.length; i++) {
     for (let j=0; j < pattern[0].length; j++) {

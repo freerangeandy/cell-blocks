@@ -1,7 +1,8 @@
 import { CANVAS_WIDTH, CANVAS_HEIGHT, BOX_WIDTH, maxRow, maxCol, RAND_DENSITY,
         GLIDER_PATTERN } from "./constants.js"
 import { blankCellGrid, getRowColID, fadeIn, paintCell, paintAllCells, isValidCell,
-        getFillColor, updateNeighborsLivingNeighbors, toggleLife, placePattern } from "./utilities.js"
+        getFillColor, updateNeighborsLivingNeighbors, toggleLife, placePattern,
+        drawDragPattern } from "./utilities.js"
 import Cell from "./Cell"
 
 const canvas = document.getElementById('mainCanvas')
@@ -31,24 +32,6 @@ const drawGrid = () => {
       ctx.beginPath()
       ctx.rect(colID*BOX_WIDTH,rowID*BOX_WIDTH,BOX_WIDTH,BOX_WIDTH)
       ctx.stroke()
-    })
-  })
-}
-
-const drawDragPattern = (patternCanvas, patternScheme) => {
-  const patternCtx = patternCanvas.getContext('2d')
-  patternCtx.strokeStyle='#555555'
-  patternScheme.forEach((row, rowID) => {
-    row.forEach((val, colID) => {
-      patternCtx.beginPath()
-      patternCtx.rect(colID*BOX_WIDTH,rowID*BOX_WIDTH,BOX_WIDTH,BOX_WIDTH)
-      patternCtx.stroke()
-      if (val === 1) {
-        patternCtx.beginPath()
-        patternCtx.fillStyle = '#770000'
-        patternCtx.fillRect(colID*BOX_WIDTH+1,rowID*BOX_WIDTH+1,BOX_WIDTH-2,BOX_WIDTH-2)
-        patternCtx.stroke()
-      }
     })
   })
 }
