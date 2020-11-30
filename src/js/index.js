@@ -95,7 +95,7 @@ const applyNextStates = () => {
 const animate = () => {
   setNextStates()
   applyNextStates()
-  fadeIn(() => paintAllCells(ctx), ctx, 8)
+  fadeIn(() => paintAllCells(ctx, gridBoxes), ctx, 8)
 }
 
 // utilities
@@ -106,8 +106,8 @@ const paintCell = (ctx, thisCell) => {
   ctx.stroke()
 }
 
-const paintAllCells = (ctx) => {
-  gridBoxes.forEach((row, rowID) => {
+const paintAllCells = (ctx, grid) => {
+  grid.forEach((row, rowID) => {
     row.forEach((thisCell, colID) => {
       paintCell(ctx, thisCell)
     })
@@ -210,7 +210,6 @@ const dropPattern = (e, shiftX, shiftY) => {
   const botRow = topRow + GLIDER_PATTERN.length - 1
   const rightCol = leftCol + GLIDER_PATTERN[0].length - 1
   if (isValidCell(topRow, leftCol) && isValidCell(botRow, rightCol)) {
-    toggleLife(topRow, leftCol)
     placePattern(ctx, topRow, leftCol, GLIDER_PATTERN)
   }
   // console.log(`top left corner: ${topRow}, ${leftCol}`)
@@ -236,7 +235,7 @@ const startListener = (e) => {
 
 const resetListener = (e) => {
   gridBoxes = blankCellGrid(maxRow, maxCol)
-  paintAllCells(ctx)
+  paintAllCells(ctx, gridBoxes)
 }
 
 const randomListener = (e) => {
@@ -248,7 +247,7 @@ const randomListener = (e) => {
       }
     })
   })
-  paintAllCells(ctx)
+  paintAllCells(ctx, gridBoxes)
 }
 
 // handles drawing/erasing cells in canvas
