@@ -1,5 +1,7 @@
-import { CANVAS_WIDTH, CANVAS_HEIGHT, BOX_WIDTH, maxRow, maxCol, RAND_DENSITY, GLIDER_PATTERN } from "./constants.js"
-import { blankCellGrid, getRowColID, fadeIn, paintCell, paintAllCells, isValidCell, getFillColor } from "./utilities.js"
+import { CANVAS_WIDTH, CANVAS_HEIGHT, BOX_WIDTH, maxRow, maxCol, RAND_DENSITY,
+        GLIDER_PATTERN } from "./constants.js"
+import { blankCellGrid, getRowColID, fadeIn, paintCell, paintAllCells, isValidCell,
+        getFillColor, updateNeighborsLivingNeighbors, toggleLife } from "./utilities.js"
 import Cell from "./Cell"
 
 const canvas = document.getElementById('mainCanvas')
@@ -49,17 +51,6 @@ const drawDragPattern = (pattern) => {
       }
     })
   })
-}
-
-// tie this action to flipping of a cell state as close to possible
-const updateNeighborsLivingNeighbors = (cell, grid) => {
-  const updateVal = cell.living ? 1 : -1
-  cell.neighbors.forEach(([i, j]) => { grid[i][j].livingNeighbors += updateVal })
-}
-
-const toggleLife = (cell, grid) => {
-  cell.living = !cell.living
-  updateNeighborsLivingNeighbors(cell, grid)
 }
 
 // go through the conway life cycle:

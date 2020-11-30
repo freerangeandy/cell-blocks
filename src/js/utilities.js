@@ -36,3 +36,14 @@ export const paintAllCells = (ctx, grid) => {
 
 export const isValidCell = (row, col) => (row>=0 && row<maxRow && col>=0 && col<maxCol)
 export const getFillColor = (thisCell) => thisCell.living ? '#770000' : 'white'
+
+// tie this action to flipping of a cell state as close to possible
+export const updateNeighborsLivingNeighbors = (cell, grid) => {
+  const updateVal = cell.living ? 1 : -1
+  cell.neighbors.forEach(([i, j]) => { grid[i][j].livingNeighbors += updateVal })
+}
+
+export const toggleLife = (cell, grid) => {
+  cell.living = !cell.living
+  updateNeighborsLivingNeighbors(cell, grid)
+}
