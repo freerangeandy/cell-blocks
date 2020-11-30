@@ -1,9 +1,10 @@
-import { CANVAS_WIDTH, CANVAS_HEIGHT, BOX_WIDTH, maxRow, maxCol } from './constants.js'
+import { CANVAS_WIDTH, CANVAS_HEIGHT, BOX_WIDTH, GRID_COLOR, LIVE_COLOR,
+        maxRow, maxCol } from './constants.js'
 import Cell from "./Cell"
 
 // set initial state
 export const drawGrid = (ctx, gridBoxes) => {
-  ctx.strokeStyle='#555555'
+  ctx.strokeStyle = GRID_COLOR
   ctx.clearRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT)
   gridBoxes.forEach((row, rowID) => {
     row.forEach((_, colID) => {
@@ -19,7 +20,7 @@ export const randomCellGrid = (w, h, density) => [...Array(w)].map(row=>[...Arra
 
 // pure helper functions
 export const isValidCell = (row, col) => (row>=0 && row<maxRow && col>=0 && col<maxCol)
-export const getFillColor = (thisCell) => thisCell.living ? '#770000' : 'white'
+export const getFillColor = (thisCell) => thisCell.living ? LIVE_COLOR : 'white'
 
 export const getRowColID = (e) => {
   const rowID = Math.floor(e.offsetY/BOX_WIDTH)
@@ -66,7 +67,7 @@ export const toggleLife = (cell, grid) => {
 // drag/drop patterns onto canvas
 export const drawDragPattern = (patternCanvas, patternScheme) => {
   const patternCtx = patternCanvas.getContext('2d')
-  patternCtx.strokeStyle='#555555'
+  patternCtx.strokeStyle = GRID_COLOR
   patternScheme.forEach((row, rowID) => {
     row.forEach((val, colID) => {
       patternCtx.beginPath()
@@ -74,7 +75,7 @@ export const drawDragPattern = (patternCanvas, patternScheme) => {
       patternCtx.stroke()
       if (val === 1) {
         patternCtx.beginPath()
-        patternCtx.fillStyle = '#770000'
+        patternCtx.fillStyle = LIVE_COLOR
         patternCtx.fillRect(colID*BOX_WIDTH+1,rowID*BOX_WIDTH+1,BOX_WIDTH-2,BOX_WIDTH-2)
         patternCtx.stroke()
       }
