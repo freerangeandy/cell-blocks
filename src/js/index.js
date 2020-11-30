@@ -63,7 +63,7 @@ let eraseMode = false
 const clickDrawStartListener = (e) => {
   const [rowID, colID] = getRowColID(e)
   const thisCell = gridBoxes[rowID][colID]
-  eraseMode = thisCell.living ? true : false
+  eraseMode = thisCell.living
   drawingCells = true
   toggleLife(thisCell, gridBoxes)
   paintCell(ctx, thisCell)
