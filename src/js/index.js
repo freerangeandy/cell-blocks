@@ -52,15 +52,14 @@ const drawDragPattern = (pattern) => {
 }
 
 // tie this action to flipping of a cell state as close to possible
-const updateNeighborsLivingNeighbors = (cell) => {
+const updateNeighborsLivingNeighbors = (cell, grid) => {
   const updateVal = cell.living ? 1 : -1
-  cell.neighbors.forEach(([i, j]) => { gridBoxes[i][j].livingNeighbors += updateVal })
+  cell.neighbors.forEach(([i, j]) => { grid[i][j].livingNeighbors += updateVal })
 }
 
-const toggleLife = (i, j) => {
-  const thisCell = gridBoxes[i][j]
-  thisCell.living = !thisCell.living
-  updateNeighborsLivingNeighbors(thisCell)
+const toggleLife = (cell, grid) => {
+  cell.living = !cell.living
+  updateNeighborsLivingNeighbors(cell, grid)
 }
 
 // go through the conway life cycle:
@@ -86,7 +85,7 @@ const applyNextStates = () => {
       const stateFlip = thisCell.living != thisCell.nextState
       thisCell.advanceState() // conway rules
       if (stateFlip){
-        updateNeighborsLivingNeighbors(thisCell)
+        updateNeighborsLivingNeighbors(thisCell, gridBoxes)
       }
     })
   })
@@ -106,7 +105,7 @@ const placePattern = (ctx, topRowID, leftColID, pattern) => {
       const thisCell = gridBoxes[rowID][colID]
       const patternVal = pattern[i][j]
       if (thisCell.living != (patternVal === 1)) {
-        toggleLife(rowID, colID)
+        toggleLife(thisCell, gridBoxes)
         paintCell(ctx, thisCell)
       }
     }
@@ -121,7 +120,7 @@ const clickDrawStartListener = (e) => {
   const thisCell = gridBoxes[rowID][colID]
   eraseMode = thisCell.living ? true : false
   drawingCells = true
-  toggleLife(rowID, colID)
+  toggleLife(thisCell, gridBoxes)
   paintCell(ctx, thisCell)
 }
 
@@ -136,7 +135,7 @@ const moveListener = (e) => {
   if (drawingCells && isValidCell(rowID, colID)) {
     const thisCell = gridBoxes[rowID][colID]
     if (eraseMode === thisCell.living){
-      toggleLife(rowID, colID)
+      toggleLife(thisCell, gridBoxes)
       paintCell(ctx, thisCell)
     }
   }
@@ -228,7 +227,7 @@ const randomListener = (e) => {
   gridBoxes.forEach((row, rowID) => {
     row.forEach((thisCell, colID) => {
       if (thisCell.living !== seedArray[rowID][colID]){
-        toggleLife(rowID, colID)
+        toggleLife(thisCell, gridBoxes)
       }
     })
   })
