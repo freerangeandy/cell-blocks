@@ -12,7 +12,6 @@ const yHover = document.getElementById('yHover')
 const startButton = document.getElementById('startButton')
 const resetButton = document.getElementById('resetButton')
 const randomButton = document.getElementById('randomButton')
-
 const spaceshipNodes = Object.fromEntries(new Map(
   Object.keys(spaceshipPatterns).map(id => [id, document.getElementById(id)])
 ))
@@ -21,19 +20,11 @@ let gridBoxes
 const init = () => {
   gridBoxes = blankCellGrid(maxRow, maxCol)
   drawGrid(ctx, gridBoxes)
-  spaceshipNodes.gliderPattern.setAttribute('width', BOX_WIDTH*spaceshipPatterns.gliderPattern[0].length)
-  spaceshipNodes.gliderPattern.setAttribute('height', BOX_WIDTH*spaceshipPatterns.gliderPattern.length)
-  spaceshipNodes.lwssPattern.setAttribute('width', BOX_WIDTH*spaceshipPatterns.lwssPattern[0].length)
-  spaceshipNodes.lwssPattern.setAttribute('height', BOX_WIDTH*spaceshipPatterns.lwssPattern.length)
-  spaceshipNodes.mwssPattern.setAttribute('width', BOX_WIDTH*spaceshipPatterns.mwssPattern[0].length)
-  spaceshipNodes.mwssPattern.setAttribute('height', BOX_WIDTH*spaceshipPatterns.mwssPattern.length)
-  spaceshipNodes.hwssPattern.setAttribute('width', BOX_WIDTH*spaceshipPatterns.hwssPattern[0].length)
-  spaceshipNodes.hwssPattern.setAttribute('height', BOX_WIDTH*spaceshipPatterns.hwssPattern.length)
-
-  drawDragPattern(spaceshipNodes.gliderPattern, spaceshipPatterns.gliderPattern)
-  drawDragPattern(spaceshipNodes.lwssPattern, spaceshipPatterns.lwssPattern)
-  drawDragPattern(spaceshipNodes.mwssPattern, spaceshipPatterns.mwssPattern)
-  drawDragPattern(spaceshipNodes.hwssPattern, spaceshipPatterns.hwssPattern)
+  for (const [id, node] of Object.entries(spaceshipNodes)) {
+    node.setAttribute('width', BOX_WIDTH*spaceshipPatterns[id][0].length)
+    node.setAttribute('height', BOX_WIDTH*spaceshipPatterns[id].length)
+    drawDragPattern(node, spaceshipPatterns[id])
+  }
 }
 
 // go through the conway life cycle:
@@ -206,19 +197,11 @@ const randomListener = (e) => {
 canvas.addEventListener('mousemove', moveListener)
 document.addEventListener('mouseup', mouseUpListener)
 canvas.addEventListener('mousedown', clickDrawStartListener)
-// handles dragging pattern
-spaceshipNodes.gliderPattern.addEventListener('mousedown', dragPatternStartListener(spaceshipPatterns.gliderPattern, spaceshipNodes.gliderPattern))
-spaceshipNodes.gliderPattern.addEventListener('dragstart', () => false)
-
-spaceshipNodes.lwssPattern.addEventListener('mousedown', dragPatternStartListener(spaceshipPatterns.lwssPattern, spaceshipNodes.lwssPattern))
-spaceshipNodes.lwssPattern.addEventListener('dragstart', () => false)
-
-spaceshipNodes.mwssPattern.addEventListener('mousedown', dragPatternStartListener(spaceshipPatterns.mwssPattern, spaceshipNodes.mwssPattern))
-spaceshipNodes.mwssPattern.addEventListener('dragstart', () => false)
-
-spaceshipNodes.hwssPattern.addEventListener('mousedown', dragPatternStartListener(spaceshipPatterns.hwssPattern, spaceshipNodes.hwssPattern))
-spaceshipNodes.hwssPattern.addEventListener('dragstart', () => false)
-
+// handles pattern drag and drop
+for (const [id, node] of Object.entries(spaceshipNodes)) {
+  node.addEventListener('mousedown', dragPatternStartListener(spaceshipPatterns[id], node))
+  node.addEventListener('dragstart', () => false)
+}
 // handles button presses
 startButton.addEventListener('click', startListener)
 resetButton.addEventListener('click', resetListener)
