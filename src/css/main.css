@@ -76,6 +76,14 @@ body {
   cursor: pointer;
 }
 
+.pencilMode {
+  cursor: url(http://www.rw-designer.com/cursor-extern.php?id=72974), pointer;
+}
+
+.eraseMode {
+  cursor: url(http://www.rw-designer.com/cursor-extern.php?id=72976), pointer;
+}
+
 #originPattern {
   margin-top: 10px;
   border: 3px solid #555555;

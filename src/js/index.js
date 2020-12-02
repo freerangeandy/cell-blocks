@@ -57,6 +57,18 @@ const animate = () => {
   fadeIn(() => paintAllCells(ctx, gridBoxes), ctx, 8)
 }
 
+const setClickDrawCursor = (eraseMode) => {
+  if (eraseMode === undefined) {
+    canvas.classList.remove('eraseMode', 'pencilMode')
+  } else if (eraseMode) {
+    canvas.classList.add('eraseMode')
+    canvas.classList.remove('pencilMode')
+  } else {
+    canvas.classList.add('pencilMode')
+    canvas.classList.remove('eraseMode')
+  }
+}
+
 // event handlers
 let drawingCells = false
 let eraseMode = false
@@ -64,12 +76,14 @@ const clickDrawStartListener = (e) => {
   const [rowID, colID] = getRowColID(e)
   const thisCell = gridBoxes[rowID][colID]
   eraseMode = thisCell.living
+  setClickDrawCursor(eraseMode)
   drawingCells = true
   toggleLife(thisCell, gridBoxes)
   paintCell(ctx, thisCell)
 }
 
 const mouseUpListener = (e) => {
+  setClickDrawCursor()
   drawingCells = false
 }
 
