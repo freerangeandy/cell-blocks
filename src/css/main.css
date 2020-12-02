@@ -26,6 +26,7 @@ body {
   font-weight: 400;
   color: #fffef6;
   text-align: center;
+  cursor: pointer;
   transition: all 0.2s;
 }
 
@@ -72,6 +73,7 @@ body {
 #mainCanvas {
   border: 3px solid #555555;
   background-color: #fffef6;
+  cursor: pointer;
 }
 
 #originPattern {
