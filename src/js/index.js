@@ -13,6 +13,9 @@ const startButton = document.getElementById('startButton')
 const resetButton = document.getElementById('resetButton')
 const randomButton = document.getElementById('randomButton')
 const originPattern = document.getElementById('originPattern')
+const originPattern2 = document.getElementById('originPattern2')
+const originPattern3 = document.getElementById('originPattern3')
+const originPattern4 = document.getElementById('originPattern4')
 
 let gridBoxes
 const init = () => {
@@ -20,7 +23,17 @@ const init = () => {
   drawGrid(ctx, gridBoxes)
   originPattern.setAttribute('width', BOX_WIDTH*3)
   originPattern.setAttribute('height', BOX_WIDTH*3)
+  originPattern2.setAttribute('width', BOX_WIDTH*5)
+  originPattern2.setAttribute('height', BOX_WIDTH*4)
+  originPattern3.setAttribute('width', BOX_WIDTH*6)
+  originPattern3.setAttribute('height', BOX_WIDTH*4)
+  originPattern4.setAttribute('width', BOX_WIDTH*7)
+  originPattern4.setAttribute('height', BOX_WIDTH*4)
+
   drawDragPattern(originPattern, GLIDER_PATTERN)
+  drawDragPattern(originPattern2, LWSS_PATTERN)
+  drawDragPattern(originPattern3, MWSS_PATTERN)
+  drawDragPattern(originPattern4, HWSS_PATTERN)
 }
 
 // go through the conway life cycle:
