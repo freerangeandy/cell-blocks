@@ -9,4 +9,26 @@ export const maxCol = CANVAS_WIDTH/BOX_WIDTH
 
 export const RAND_DENSITY = 0.4
 
-export const GLIDER_PATTERN = [[0,1,0],[0,0,1],[1,1,1]]
+export const GLIDER_PATTERN = [
+  [0,1,0],
+  [0,0,1],
+  [1,1,1]
+]
+export const LWSS_PATTERN = [
+  [0,1,1,0,0],
+  [1,1,1,1,0],
+  [1,1,0,1,1],
+  [0,0,1,1,0],
+]
+export const MWSS_PATTERN = [
+  [0,1,1,1,0,0],
+  [1,1,1,1,1,0],
+  [1,1,1,0,1,1],
+  [0,0,0,1,1,0]
+]
+export const HWSS_PATTERN = [
+  [0,1,1,1,1,0,0],
+  [1,1,1,1,1,1,0],
+  [1,1,1,1,0,1,1],
+  [0,0,0,0,1,1,0]
+]

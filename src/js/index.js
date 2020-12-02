@@ -1,5 +1,5 @@
 import { CANVAS_WIDTH, CANVAS_HEIGHT, BOX_WIDTH, maxRow, maxCol, RAND_DENSITY,
-        GLIDER_PATTERN } from "./constants.js"
+        GLIDER_PATTERN, LWSS_PATTERN, MWSS_PATTERN, HWSS_PATTERN } from "./constants.js"
 import { blankCellGrid, getRowColID, fadeIn, paintCell, paintAllCells, isValidCell,
         getFillColor, updateNeighborsLivingNeighbors, toggleLife, placePattern,
         drawDragPattern, drawGrid, randomCellGrid } from "./utilities.js"
