@@ -1,5 +1,5 @@
 import { CANVAS_WIDTH, CANVAS_HEIGHT, BOX_WIDTH, maxRow, maxCol, RAND_DENSITY,
-        GLIDER_PATTERN, LWSS_PATTERN, MWSS_PATTERN, HWSS_PATTERN, spaceshipPatterns } from "./constants.js"
+        spaceshipPatterns } from "./constants.js"
 import { blankCellGrid, getRowColID, fadeIn, paintCell, paintAllCells, isValidCell,
         getFillColor, updateNeighborsLivingNeighbors, toggleLife, placePattern,
         drawDragPattern, drawGrid, randomCellGrid } from "./utilities.js"
@@ -30,10 +30,10 @@ const init = () => {
   spaceshipNodes.hwssPattern.setAttribute('width', BOX_WIDTH*7)
   spaceshipNodes.hwssPattern.setAttribute('height', BOX_WIDTH*4)
 
-  drawDragPattern(spaceshipNodes.gliderPattern, GLIDER_PATTERN)
-  drawDragPattern(spaceshipNodes.lwssPattern, LWSS_PATTERN)
-  drawDragPattern(spaceshipNodes.mwssPattern, MWSS_PATTERN)
-  drawDragPattern(spaceshipNodes.hwssPattern, HWSS_PATTERN)
+  drawDragPattern(spaceshipNodes.gliderPattern, spaceshipPatterns.gliderPattern)
+  drawDragPattern(spaceshipNodes.lwssPattern, spaceshipPatterns.lwssPattern)
+  drawDragPattern(spaceshipNodes.mwssPattern, spaceshipPatterns.mwssPattern)
+  drawDragPattern(spaceshipNodes.hwssPattern, spaceshipPatterns.hwssPattern)
 }
 
 // go through the conway life cycle:
@@ -207,16 +207,16 @@ canvas.addEventListener('mousemove', moveListener)
 document.addEventListener('mouseup', mouseUpListener)
 canvas.addEventListener('mousedown', clickDrawStartListener)
 // handles dragging pattern
-spaceshipNodes.gliderPattern.addEventListener('mousedown', dragPatternStartListener(GLIDER_PATTERN, spaceshipNodes.gliderPattern))
+spaceshipNodes.gliderPattern.addEventListener('mousedown', dragPatternStartListener(spaceshipPatterns.gliderPattern, spaceshipNodes.gliderPattern))
 spaceshipNodes.gliderPattern.addEventListener('dragstart', () => false)
 
-spaceshipNodes.lwssPattern.addEventListener('mousedown', dragPatternStartListener(LWSS_PATTERN, spaceshipNodes.lwssPattern))
+spaceshipNodes.lwssPattern.addEventListener('mousedown', dragPatternStartListener(spaceshipPatterns.lwssPattern, spaceshipNodes.lwssPattern))
 spaceshipNodes.lwssPattern.addEventListener('dragstart', () => false)
 
-spaceshipNodes.mwssPattern.addEventListener('mousedown', dragPatternStartListener(MWSS_PATTERN, spaceshipNodes.mwssPattern))
+spaceshipNodes.mwssPattern.addEventListener('mousedown', dragPatternStartListener(spaceshipPatterns.mwssPattern, spaceshipNodes.mwssPattern))
 spaceshipNodes.mwssPattern.addEventListener('dragstart', () => false)
 
-spaceshipNodes.hwssPattern.addEventListener('mousedown', dragPatternStartListener(HWSS_PATTERN, spaceshipNodes.hwssPattern))
+spaceshipNodes.hwssPattern.addEventListener('mousedown', dragPatternStartListener(spaceshipPatterns.hwssPattern, spaceshipNodes.hwssPattern))
 spaceshipNodes.hwssPattern.addEventListener('dragstart', () => false)
 
 // handles button presses

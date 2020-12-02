@@ -9,24 +9,28 @@ export const maxCol = CANVAS_WIDTH/BOX_WIDTH
 
 export const RAND_DENSITY = 0.4
 
-export const GLIDER_PATTERN = [
+const GLIDER_ID = 'gliderPattern' // needs to match DOM element ID
+const LWSS_ID = 'lwssPattern'
+const MWSS_ID = 'mwssPattern'
+const HWSS_ID = 'hwssPattern'
+const GLIDER_PATTERN = [
   [0,1,0],
   [0,0,1],
   [1,1,1]
 ]
-export const LWSS_PATTERN = [
+const LWSS_PATTERN = [
   [0,1,1,0,0],
   [1,1,1,1,0],
   [1,1,0,1,1],
   [0,0,1,1,0],
 ]
-export const MWSS_PATTERN = [
+const MWSS_PATTERN = [
   [0,1,1,1,0,0],
   [1,1,1,1,1,0],
   [1,1,1,0,1,1],
   [0,0,0,1,1,0]
 ]
-export const HWSS_PATTERN = [
+const HWSS_PATTERN = [
   [0,1,1,1,1,0,0],
   [1,1,1,1,1,1,0],
   [1,1,1,1,0,1,1],
@@ -34,8 +38,8 @@ export const HWSS_PATTERN = [
 ]
 
 export const spaceshipPatterns = {
-  'gliderPattern': GLIDER_PATTERN,
-  'lwssPattern': LWSS_PATTERN,
-  'mwssPattern': MWSS_PATTERN,
-  'hwssPattern': LWSS_PATTERN
+  [GLIDER_ID]: GLIDER_PATTERN,
+  [LWSS_ID]: LWSS_PATTERN,
+  [MWSS_ID]: MWSS_PATTERN,
+  [HWSS_ID]: HWSS_PATTERN
 }
