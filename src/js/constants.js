@@ -32,3 +32,10 @@ export const HWSS_PATTERN = [
   [1,1,1,1,0,1,1],
   [0,0,0,0,1,1,0]
 ]
+
+export const spaceshipPatterns = {
+  'gliderPattern': GLIDER_PATTERN,
+  'lwssPattern': LWSS_PATTERN,
+  'mwssPattern': MWSS_PATTERN,
+  'hwssPattern': LWSS_PATTERN
+}
