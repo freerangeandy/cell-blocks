@@ -114,9 +114,9 @@ const moveListener = (e) => {
 }
 
 let dragImage = null
-const dragPatternStartListener = (e) => {
-  let shiftX = e.clientX - originPattern.getBoundingClientRect().left
-  let shiftY = e.clientY - originPattern.getBoundingClientRect().top
+const dragPatternStartListener = (pattern, originNode) => (e) => {
+  let shiftX = e.clientX - originNode.getBoundingClientRect().left
+  let shiftY = e.clientY - originNode.getBoundingClientRect().top
   let clonedYet = false
 
   const moveAt = (pageX, pageY) => {
@@ -128,11 +128,11 @@ const dragPatternStartListener = (e) => {
 
   const movePatternListener = (e) => {
     if (!clonedYet) {
-      dragImage = originPattern.cloneNode(true)
+      dragImage = originNode.cloneNode(true)
       dragImage.setAttribute('id', 'dragPattern')
       dragImage.style.position = 'absolute'
       dragImage.style.zIndex = 1000
-      drawDragPattern(dragImage, GLIDER_PATTERN)
+      drawDragPattern(dragImage, pattern)
       document.body.append(dragImage)
       clonedYet = true
     }
@@ -143,7 +143,7 @@ const dragPatternStartListener = (e) => {
     document.removeEventListener('mousemove', movePatternListener)
     document.removeEventListener('mouseup', dropPatternListener)
     if (clonedYet) {
-      dropPattern(e, shiftX, shiftY)
+      dropPattern(e, shiftX, shiftY, pattern)
       document.body.removeChild(dragImage)
       dragImage = null
       clonedYet = false
@@ -154,16 +154,16 @@ const dragPatternStartListener = (e) => {
   document.addEventListener('mouseup', dropPatternListener)
 }
 
-const dropPattern = (e, shiftX, shiftY) => {
+const dropPattern = (e, shiftX, shiftY, pattern) => {
   let offsetX = e.clientX - shiftX - canvas.getBoundingClientRect().left
   let offsetY = e.clientY - shiftY - canvas.getBoundingClientRect().top
 
   const topRow = Math.floor(offsetY/BOX_WIDTH)
   const leftCol = Math.floor(offsetX/BOX_WIDTH)
-  const botRow = topRow + GLIDER_PATTERN.length - 1
-  const rightCol = leftCol + GLIDER_PATTERN[0].length - 1
+  const botRow = topRow + pattern.length - 1
+  const rightCol = leftCol + pattern[0].length - 1
   if (isValidCell(topRow, leftCol) && isValidCell(botRow, rightCol)) {
-    placePattern(ctx, gridBoxes, topRow, leftCol, GLIDER_PATTERN)
+    placePattern(ctx, gridBoxes, topRow, leftCol, pattern)
   }
 }
 
@@ -207,8 +207,18 @@ canvas.addEventListener('mousemove', moveListener)
 document.addEventListener('mouseup', mouseUpListener)
 canvas.addEventListener('mousedown', clickDrawStartListener)
 // handles dragging pattern
-originPattern.addEventListener('mousedown', dragPatternStartListener)
+originPattern.addEventListener('mousedown', dragPatternStartListener(GLIDER_PATTERN, originPattern))
 originPattern.addEventListener('dragstart', () => false)
+
+originPattern2.addEventListener('mousedown', dragPatternStartListener(LWSS_PATTERN, originPattern2))
+originPattern2.addEventListener('dragstart', () => false)
+
+originPattern3.addEventListener('mousedown', dragPatternStartListener(MWSS_PATTERN, originPattern3))
+originPattern3.addEventListener('dragstart', () => false)
+
+originPattern4.addEventListener('mousedown', dragPatternStartListener(HWSS_PATTERN, originPattern4))
+originPattern4.addEventListener('dragstart', () => false)
+
 // handles button presses
 startButton.addEventListener('click', startListener)
 resetButton.addEventListener('click', resetListener)
