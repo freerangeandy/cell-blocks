@@ -12,28 +12,29 @@ const yHover = document.getElementById('yHover')
 const startButton = document.getElementById('startButton')
 const resetButton = document.getElementById('resetButton')
 const randomButton = document.getElementById('randomButton')
-const originPattern = document.getElementById('originPattern')
-const originPattern2 = document.getElementById('originPattern2')
-const originPattern3 = document.getElementById('originPattern3')
-const originPattern4 = document.getElementById('originPattern4')
+
+const gliderPattern = document.getElementById('gliderPattern')
+const lwssPattern = document.getElementById('lwssPattern')
+const mwssPattern = document.getElementById('mwssPattern')
+const hwssPattern = document.getElementById('hwssPattern')
 
 let gridBoxes
 const init = () => {
   gridBoxes = blankCellGrid(maxRow, maxCol)
   drawGrid(ctx, gridBoxes)
-  originPattern.setAttribute('width', BOX_WIDTH*3)
-  originPattern.setAttribute('height', BOX_WIDTH*3)
-  originPattern2.setAttribute('width', BOX_WIDTH*5)
-  originPattern2.setAttribute('height', BOX_WIDTH*4)
-  originPattern3.setAttribute('width', BOX_WIDTH*6)
-  originPattern3.setAttribute('height', BOX_WIDTH*4)
-  originPattern4.setAttribute('width', BOX_WIDTH*7)
-  originPattern4.setAttribute('height', BOX_WIDTH*4)
+  gliderPattern.setAttribute('width', BOX_WIDTH*3)
+  gliderPattern.setAttribute('height', BOX_WIDTH*3)
+  lwssPattern.setAttribute('width', BOX_WIDTH*5)
+  lwssPattern.setAttribute('height', BOX_WIDTH*4)
+  mwssPattern.setAttribute('width', BOX_WIDTH*6)
+  mwssPattern.setAttribute('height', BOX_WIDTH*4)
+  hwssPattern.setAttribute('width', BOX_WIDTH*7)
+  hwssPattern.setAttribute('height', BOX_WIDTH*4)
 
-  drawDragPattern(originPattern, GLIDER_PATTERN)
-  drawDragPattern(originPattern2, LWSS_PATTERN)
-  drawDragPattern(originPattern3, MWSS_PATTERN)
-  drawDragPattern(originPattern4, HWSS_PATTERN)
+  drawDragPattern(gliderPattern, GLIDER_PATTERN)
+  drawDragPattern(lwssPattern, LWSS_PATTERN)
+  drawDragPattern(mwssPattern, MWSS_PATTERN)
+  drawDragPattern(hwssPattern, HWSS_PATTERN)
 }
 
 // go through the conway life cycle:
@@ -207,17 +208,17 @@ canvas.addEventListener('mousemove', moveListener)
 document.addEventListener('mouseup', mouseUpListener)
 canvas.addEventListener('mousedown', clickDrawStartListener)
 // handles dragging pattern
-originPattern.addEventListener('mousedown', dragPatternStartListener(GLIDER_PATTERN, originPattern))
-originPattern.addEventListener('dragstart', () => false)
+gliderPattern.addEventListener('mousedown', dragPatternStartListener(GLIDER_PATTERN, gliderPattern))
+gliderPattern.addEventListener('dragstart', () => false)
 
-originPattern2.addEventListener('mousedown', dragPatternStartListener(LWSS_PATTERN, originPattern2))
-originPattern2.addEventListener('dragstart', () => false)
+lwssPattern.addEventListener('mousedown', dragPatternStartListener(LWSS_PATTERN, lwssPattern))
+lwssPattern.addEventListener('dragstart', () => false)
 
-originPattern3.addEventListener('mousedown', dragPatternStartListener(MWSS_PATTERN, originPattern3))
-originPattern3.addEventListener('dragstart', () => false)
+mwssPattern.addEventListener('mousedown', dragPatternStartListener(MWSS_PATTERN, mwssPattern))
+mwssPattern.addEventListener('dragstart', () => false)
 
-originPattern4.addEventListener('mousedown', dragPatternStartListener(HWSS_PATTERN, originPattern4))
-originPattern4.addEventListener('dragstart', () => false)
+hwssPattern.addEventListener('mousedown', dragPatternStartListener(HWSS_PATTERN, hwssPattern))
+hwssPattern.addEventListener('dragstart', () => false)
 
 // handles button presses
 startButton.addEventListener('click', startListener)
