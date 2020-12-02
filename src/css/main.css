@@ -77,11 +77,11 @@ body {
 }
 
 .pencilMode {
-  cursor: url(http://www.rw-designer.com/cursor-extern.php?id=72974), pointer;
+  cursor: url(../assets/pencil.cur), pointer;
 }
 
 .eraseMode {
-  cursor: url(http://www.rw-designer.com/cursor-extern.php?id=72976), pointer;
+  cursor: url(../assets/eraser.cur), pointer;
 }
 
 #originPattern {
