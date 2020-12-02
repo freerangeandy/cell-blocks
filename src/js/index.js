@@ -149,8 +149,8 @@ const dropPattern = (e, shiftX, shiftY, pattern) => {
   let offsetX = e.clientX - shiftX - canvas.getBoundingClientRect().left
   let offsetY = e.clientY - shiftY - canvas.getBoundingClientRect().top
 
-  const topRow = Math.floor(offsetY/BOX_WIDTH)
-  const leftCol = Math.floor(offsetX/BOX_WIDTH)
+  const topRow = Math.round(offsetY/BOX_WIDTH + 0.4)
+  const leftCol = Math.round(offsetX/BOX_WIDTH + 0.1)
   const botRow = topRow + pattern.length - 1
   const rightCol = leftCol + pattern[0].length - 1
   if (isValidCell(topRow, leftCol) && isValidCell(botRow, rightCol)) {
