@@ -1,5 +1,5 @@
 import { CANVAS_WIDTH, CANVAS_HEIGHT, BOX_WIDTH, maxRow, maxCol, RAND_DENSITY,
-        GLIDER_PATTERN } from "./constants.js"
+        spaceshipPatterns } from "./constants.js"
 import { blankCellGrid, getRowColID, fadeIn, paintCell, paintAllCells, isValidCell,
         getFillColor, updateNeighborsLivingNeighbors, toggleLife, placePattern,
         drawDragPattern, drawGrid, randomCellGrid } from "./utilities.js"
@@ -12,15 +12,19 @@ const yHover = document.getElementById('yHover')
 const startButton = document.getElementById('startButton')
 const resetButton = document.getElementById('resetButton')
 const randomButton = document.getElementById('randomButton')
-const originPattern = document.getElementById('originPattern')
+const spaceshipNodes = Object.fromEntries(new Map(
+  Object.keys(spaceshipPatterns).map(id => [id, document.getElementById(id)])
+))
 
 let gridBoxes
 const init = () => {
   gridBoxes = blankCellGrid(maxRow, maxCol)
   drawGrid(ctx, gridBoxes)
-  originPattern.setAttribute('width', BOX_WIDTH*3)
-  originPattern.setAttribute('height', BOX_WIDTH*3)
-  drawDragPattern(originPattern, GLIDER_PATTERN)
+  for (const [id, node] of Object.entries(spaceshipNodes)) {
+    node.setAttribute('width', BOX_WIDTH*spaceshipPatterns[id][0].length)
+    node.setAttribute('height', BOX_WIDTH*spaceshipPatterns[id].length)
+    drawDragPattern(node, spaceshipPatterns[id])
+  }
 }
 
 // go through the conway life cycle:
@@ -101,9 +105,9 @@ const moveListener = (e) => {
 }
 
 let dragImage = null
-const dragPatternStartListener = (e) => {
-  let shiftX = e.clientX - originPattern.getBoundingClientRect().left
-  let shiftY = e.clientY - originPattern.getBoundingClientRect().top
+const dragPatternStartListener = (pattern, originNode) => (e) => {
+  let shiftX = e.clientX - originNode.getBoundingClientRect().left
+  let shiftY = e.clientY - originNode.getBoundingClientRect().top
   let clonedYet = false
 
   const moveAt = (pageX, pageY) => {
@@ -115,11 +119,11 @@ const dragPatternStartListener = (e) => {
 
   const movePatternListener = (e) => {
     if (!clonedYet) {
-      dragImage = originPattern.cloneNode(true)
+      dragImage = originNode.cloneNode(true)
       dragImage.setAttribute('id', 'dragPattern')
       dragImage.style.position = 'absolute'
       dragImage.style.zIndex = 1000
-      drawDragPattern(dragImage, GLIDER_PATTERN)
+      drawDragPattern(dragImage, pattern)
       document.body.append(dragImage)
       clonedYet = true
     }
@@ -130,7 +134,7 @@ const dragPatternStartListener = (e) => {
     document.removeEventListener('mousemove', movePatternListener)
     document.removeEventListener('mouseup', dropPatternListener)
     if (clonedYet) {
-      dropPattern(e, shiftX, shiftY)
+      dropPattern(e, shiftX, shiftY, pattern)
       document.body.removeChild(dragImage)
       dragImage = null
       clonedYet = false
@@ -141,16 +145,16 @@ const dragPatternStartListener = (e) => {
   document.addEventListener('mouseup', dropPatternListener)
 }
 
-const dropPattern = (e, shiftX, shiftY) => {
+const dropPattern = (e, shiftX, shiftY, pattern) => {
   let offsetX = e.clientX - shiftX - canvas.getBoundingClientRect().left
   let offsetY = e.clientY - shiftY - canvas.getBoundingClientRect().top
 
-  const topRow = Math.floor(offsetY/BOX_WIDTH)
-  const leftCol = Math.floor(offsetX/BOX_WIDTH)
-  const botRow = topRow + GLIDER_PATTERN.length - 1
-  const rightCol = leftCol + GLIDER_PATTERN[0].length - 1
+  const topRow = Math.round(offsetY/BOX_WIDTH + 0.4)
+  const leftCol = Math.round(offsetX/BOX_WIDTH + 0.1)
+  const botRow = topRow + pattern.length - 1
+  const rightCol = leftCol + pattern[0].length - 1
   if (isValidCell(topRow, leftCol) && isValidCell(botRow, rightCol)) {
-    placePattern(ctx, gridBoxes, topRow, leftCol, GLIDER_PATTERN)
+    placePattern(ctx, gridBoxes, topRow, leftCol, pattern)
   }
 }
 
@@ -193,9 +197,11 @@ const randomListener = (e) => {
 canvas.addEventListener('mousemove', moveListener)
 document.addEventListener('mouseup', mouseUpListener)
 canvas.addEventListener('mousedown', clickDrawStartListener)
-// handles dragging pattern
-originPattern.addEventListener('mousedown', dragPatternStartListener)
-originPattern.addEventListener('dragstart', () => false)
+// handles pattern drag and drop
+for (const [id, node] of Object.entries(spaceshipNodes)) {
+  node.addEventListener('mousedown', dragPatternStartListener(spaceshipPatterns[id], node))
+  node.addEventListener('dragstart', () => false)
+}
 // handles button presses
 startButton.addEventListener('click', startListener)
 resetButton.addEventListener('click', resetListener)
