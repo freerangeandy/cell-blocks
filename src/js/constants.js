@@ -14,9 +14,9 @@ const LWSS_ID = 'lwssPattern'
 const MWSS_ID = 'mwssPattern'
 const HWSS_ID = 'hwssPattern'
 const GLIDER_PATTERN = [
-  [0,1,0],
-  [0,0,1],
-  [1,1,1]
+  [1,0,0],
+  [0,1,1],
+  [1,1,0]
 ]
 const LWSS_PATTERN = [
   [0,1,1,0,0],
