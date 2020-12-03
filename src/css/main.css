@@ -96,3 +96,28 @@ body {
   opacity: 0.7;
   cursor: grabbing;
 }
+
+.custom-area {
+  padding: 0px;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-evenly;
+  align-items: flex-start;
+  margin-bottom: 1em;
+}
+
+.custom-area div h4 {
+  margin: 10px 0 6px 0;
+  font-family: 'Roboto', sans-serif;
+  font-weight: 600;
+  color: #555555;
+  text-align: center;
+}
+
+.copy-button {
+  background-color: #81da6b;
+}
+
+.save-button {
+  background-color: #ef4161;
+}
