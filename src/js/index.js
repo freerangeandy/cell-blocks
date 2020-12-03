@@ -199,6 +199,20 @@ const randomListener = (e) => {
   paintAllCells(ctx, gridBoxes)
 }
 
+let isLocked = true
+const customListener = (e) => {
+  if (!isLocked) {
+    customButton.innerHTML = "Clone"
+    customButton.classList.toggle("clone-button", true)
+    customButton.classList.toggle("lock-button", false)
+  } else {
+    customButton.innerHTML = "Lock"
+    customButton.classList.toggle("clone-button", false)
+    customButton.classList.toggle("lock-button", true)
+  }
+  isLocked = !isLocked
+}
+
 // handles drawing/erasing cells in canvas
 canvas.addEventListener('mousemove', moveListener)
 document.addEventListener('mouseup', mouseUpListener)
@@ -212,6 +226,7 @@ for (const [id, node] of Object.entries(spaceshipNodes)) {
 startButton.addEventListener('click', startListener)
 resetButton.addEventListener('click', resetListener)
 randomButton.addEventListener('click', randomListener)
+customButton.addEventListener('click', customListener)
 // reset cell ID display upon leaving canvas
 canvas.addEventListener('mouseout',() => {
   rowHover.innerHTML = '---'

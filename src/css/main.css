@@ -123,10 +123,10 @@ body {
   cursor: grab;
 }
 
-.copy-button {
+.clone-button {
   background-color: #81da6b;
 }
 
-.save-button {
+.lock-button {
   background-color: #ef4161;
 }
