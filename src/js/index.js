@@ -19,7 +19,7 @@ const spaceshipNodes = Object.fromEntries(new Map(
 let gridBoxes
 const init = () => {
   gridBoxes = blankCellGrid(maxRow, maxCol)
-  drawGrid(ctx, gridBoxes)
+  drawGrid(ctx, maxRow, maxCol)
   for (const [id, node] of Object.entries(spaceshipNodes)) {
     node.setAttribute('width', BOX_WIDTH*spaceshipPatterns[id][0].length)
     node.setAttribute('height', BOX_WIDTH*spaceshipPatterns[id].length)
