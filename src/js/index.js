@@ -20,6 +20,7 @@ const customCanvas = document.getElementById('customCanvas')
 const customCtx = customCanvas.getContext('2d')
 
 let gridBoxes
+let customGrid
 const init = () => {
   gridBoxes = blankCellGrid(maxRow, maxCol)
   drawGrid(ctx, maxRow, maxCol)
@@ -28,6 +29,7 @@ const init = () => {
     node.setAttribute('height', BOX_WIDTH*spaceshipPatterns[id].length)
     drawDragPattern(node, spaceshipPatterns[id])
   }
+  customGrid = blankCellGrid(6, 6)
   customCanvas.setAttribute('width', BOX_WIDTH*6)
   customCanvas.setAttribute('height', BOX_WIDTH*6)
   drawGrid(customCtx, 6, 6)
@@ -215,6 +217,31 @@ const customListener = (e) => {
   isLocked = !isLocked
 }
 
+const moveCustomListener = (e) => {
+  const [rowID, colID] = getRowColID(e)
+  rowHover.innerHTML = rowID
+  colHover.innerHTML = colID
+  if (drawingCells && (rowID >= 0 && rowID < 6 && colID >= 0 && colID < 6)) {
+    const thisCell = customGrid[rowID][colID]
+    if (eraseMode === thisCell.living) {
+      toggleLife(thisCell, customGrid)
+      paintCell(customCtx, thisCell)
+    }
+  }
+}
+
+const clickDrawCustomListener = (e) => {
+  if (!isLocked) {
+    const [rowID, colID] = getRowColID(e)
+    const thisCell = customGrid[rowID][colID]
+    eraseMode = thisCell.living
+    setClickDrawCursor(customCanvas, eraseMode)
+    drawingCells = true
+    toggleLife(thisCell, customGrid)
+    paintCell(customCtx, thisCell)
+  }
+}
+
 // handles drawing/erasing cells in canvas
 canvas.addEventListener('mousemove', moveListener)
 document.addEventListener('mouseup', mouseUpListener(canvas))
@@ -229,6 +256,10 @@ startButton.addEventListener('click', startListener)
 resetButton.addEventListener('click', resetListener)
 randomButton.addEventListener('click', randomListener)
 customButton.addEventListener('click', customListener)
+// custom pattern canvas behavior
+customCanvas.addEventListener('mousemove', moveCustomListener)
+document.addEventListener('mouseup', mouseUpListener(customCanvas))
+customCanvas.addEventListener('mousedown', clickDrawCustomListener)
 // reset cell ID display upon leaving canvas
 canvas.addEventListener('mouseout',() => {
   rowHover.innerHTML = '---'
