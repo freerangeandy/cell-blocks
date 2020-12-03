@@ -92,8 +92,8 @@ const clickDrawStartListener = (e) => {
   paintCell(ctx, thisCell)
 }
 
-const mouseUpListener = (e) => {
-  setClickDrawCursor(canvas)
+const mouseUpListener = (canvasNode) => (e) => {
+  setClickDrawCursor(canvasNode)
   drawingCells = false
 }
 
@@ -217,7 +217,7 @@ const customListener = (e) => {
 
 // handles drawing/erasing cells in canvas
 canvas.addEventListener('mousemove', moveListener)
-document.addEventListener('mouseup', mouseUpListener)
+document.addEventListener('mouseup', mouseUpListener(canvas))
 canvas.addEventListener('mousedown', clickDrawStartListener)
 // handles pattern drag and drop
 for (const [id, node] of Object.entries(spaceshipNodes)) {
