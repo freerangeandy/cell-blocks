@@ -205,10 +205,12 @@ const customListener = (e) => {
     customButton.innerHTML = "Clone"
     customButton.classList.toggle("clone-button", true)
     customButton.classList.toggle("lock-button", false)
+    customCanvas.classList.toggle("locked-pattern", true)
   } else {
     customButton.innerHTML = "Lock"
     customButton.classList.toggle("clone-button", false)
     customButton.classList.toggle("lock-button", true)
+    customCanvas.classList.toggle("locked-pattern", false)
   }
   isLocked = !isLocked
 }

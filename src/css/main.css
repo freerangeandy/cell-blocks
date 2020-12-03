@@ -116,10 +116,14 @@ body {
   text-align: center;
 }
 
-.customPattern {
+.custom-pattern {
   margin: 0px 5px 0px 10px;
   border: 3px solid #555555;
   background-color: #fffef6;
+  cursor: pointer;
+}
+
+.locked-pattern {
   cursor: grab;
 }
 
