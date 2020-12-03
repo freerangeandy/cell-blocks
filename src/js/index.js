@@ -15,6 +15,9 @@ const randomButton = document.getElementById('randomButton')
 const spaceshipNodes = Object.fromEntries(new Map(
   Object.keys(spaceshipPatterns).map(id => [id, document.getElementById(id)])
 ))
+const customButton = document.getElementById('customButton')
+const customCanvas = document.getElementById('customCanvas')
+const customCtx = customCanvas.getContext('2d')
 
 let gridBoxes
 const init = () => {
@@ -25,6 +28,9 @@ const init = () => {
     node.setAttribute('height', BOX_WIDTH*spaceshipPatterns[id].length)
     drawDragPattern(node, spaceshipPatterns[id])
   }
+  customCanvas.setAttribute('width', BOX_WIDTH*6)
+  customCanvas.setAttribute('height', BOX_WIDTH*6)
+  drawGrid(customCtx, 6, 6)
 }
 
 // go through the conway life cycle:
