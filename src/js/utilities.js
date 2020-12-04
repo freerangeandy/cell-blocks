@@ -15,7 +15,7 @@ export const drawGrid = (ctx, numRows, numCols) => {
   }
 }
 
-export const blankCellGrid = (w, h) => [...Array(w)].map((_,i)=>[...Array(h)].map((_,j)=>new Cell(i,j)))
+export const blankCellGrid = (w, h) => [...Array(w)].map((_,i)=>[...Array(h)].map((_,j)=>new Cell(i,j,w,h)))
 export const randomCellGrid = (w, h, density) => [...Array(w)].map(row=>[...Array(h)].map(cell=>Math.random()<density))
 
 // pure helper functions
