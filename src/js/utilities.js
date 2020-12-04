@@ -96,3 +96,5 @@ export const placePattern = (ctx, grid, topRowID, leftColID, pattern) => {
     }
   }
 }
+
+export const getPatternFromGrid = (grid) => grid.map(row => row.map(cell => cell.living ? 1 : 0))
