@@ -70,10 +70,14 @@ body {
   text-align: center;
 }
 
-.mainCanvas {
+.mainCanvas, .custom-pattern {
   border: 3px solid #555555;
   background-color: #fffef6;
   cursor: pointer;
+}
+
+.custom-pattern {
+  margin: 0px 5px 0px 10px;
 }
 
 .pencilMode {
@@ -116,12 +120,7 @@ body {
   text-align: center;
 }
 
-.custom-pattern {
-  margin: 0px 5px 0px 10px;
-  border: 3px solid #555555;
-  background-color: #fffef6;
-  cursor: pointer;
-}
+
 
 .locked-pattern {
   cursor: grab;
