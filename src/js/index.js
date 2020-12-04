@@ -2,7 +2,7 @@ import { CANVAS_WIDTH, CANVAS_HEIGHT, BOX_WIDTH, maxRow, maxCol, RAND_DENSITY,
         spaceshipPatterns } from "./constants.js"
 import { blankCellGrid, getRowColID, fadeIn, paintCell, paintAllCells, isValidCell,
         getFillColor, updateNeighborsLivingNeighbors, toggleLife, placePattern,
-        drawDragPattern, drawGrid, randomCellGrid } from "./utilities.js"
+        drawDragPattern, drawGrid, randomCellGrid, getPatternFromGrid } from "./utilities.js"
 import Cell from "./Cell"
 
 const canvas = document.getElementById('mainCanvas')
@@ -15,16 +15,24 @@ const randomButton = document.getElementById('randomButton')
 const spaceshipNodes = Object.fromEntries(new Map(
   Object.keys(spaceshipPatterns).map(id => [id, document.getElementById(id)])
 ))
+const customButton = document.getElementById('customButton')
+const customCanvas = document.getElementById('customCanvas')
+const customCtx = customCanvas.getContext('2d')
 
 let gridBoxes
+let customGrid
 const init = () => {
   gridBoxes = blankCellGrid(maxRow, maxCol)
-  drawGrid(ctx, gridBoxes)
+  drawGrid(ctx, maxRow, maxCol)
   for (const [id, node] of Object.entries(spaceshipNodes)) {
     node.setAttribute('width', BOX_WIDTH*spaceshipPatterns[id][0].length)
     node.setAttribute('height', BOX_WIDTH*spaceshipPatterns[id].length)
     drawDragPattern(node, spaceshipPatterns[id])
   }
+  customGrid = blankCellGrid(6, 6)
+  customCanvas.setAttribute('width', BOX_WIDTH*6)
+  customCanvas.setAttribute('height', BOX_WIDTH*6)
+  drawGrid(customCtx, 6, 6)
 }
 
 // go through the conway life cycle:
@@ -61,15 +69,15 @@ const animate = () => {
   fadeIn(() => paintAllCells(ctx, gridBoxes), ctx, 8)
 }
 
-const setClickDrawCursor = (eraseMode) => {
+const setClickDrawCursor = (canvasNode, eraseMode) => {
   if (eraseMode === undefined) {
-    canvas.classList.remove('eraseMode', 'pencilMode')
+    canvasNode.classList.remove('eraseMode', 'pencilMode')
   } else if (eraseMode) {
-    canvas.classList.add('eraseMode')
-    canvas.classList.remove('pencilMode')
+    canvasNode.classList.add('eraseMode')
+    canvasNode.classList.remove('pencilMode')
   } else {
-    canvas.classList.add('pencilMode')
-    canvas.classList.remove('eraseMode')
+    canvasNode.classList.add('pencilMode')
+    canvasNode.classList.remove('eraseMode')
   }
 }
 
@@ -80,14 +88,14 @@ const clickDrawStartListener = (e) => {
   const [rowID, colID] = getRowColID(e)
   const thisCell = gridBoxes[rowID][colID]
   eraseMode = thisCell.living
-  setClickDrawCursor(eraseMode)
+  setClickDrawCursor(canvas, eraseMode)
   drawingCells = true
   toggleLife(thisCell, gridBoxes)
   paintCell(ctx, thisCell)
 }
 
-const mouseUpListener = (e) => {
-  setClickDrawCursor()
+const mouseUpListener = (canvasNode) => (e) => {
+  setClickDrawCursor(canvasNode)
   drawingCells = false
 }
 
@@ -193,9 +201,56 @@ const randomListener = (e) => {
   paintAllCells(ctx, gridBoxes)
 }
 
+let isLocked = true
+let customPattern, customDragPatternListener
+const customListener = (e) => {
+  if (!isLocked) {
+    customButton.innerHTML = "Edit"
+    customButton.classList.toggle("edit-button", true)
+    customButton.classList.toggle("lock-button", false)
+    customCanvas.classList.toggle("locked-pattern", true)
+    customPattern = getPatternFromGrid(customGrid)
+    customDragPatternListener = dragPatternStartListener(customPattern, customCanvas)
+    customCanvas.addEventListener('mousedown', customDragPatternListener)
+
+  } else {
+    customButton.innerHTML = "Lock"
+    customButton.classList.toggle("edit-button", false)
+    customButton.classList.toggle("lock-button", true)
+    customCanvas.classList.toggle("locked-pattern", false)
+    customCanvas.removeEventListener('mousedown', customDragPatternListener)
+  }
+  isLocked = !isLocked
+}
+
+const moveCustomListener = (e) => {
+  const [rowID, colID] = getRowColID(e)
+  rowHover.innerHTML = rowID
+  colHover.innerHTML = colID
+  if (drawingCells && (rowID >= 0 && rowID < 6 && colID >= 0 && colID < 6)) {
+    const thisCell = customGrid[rowID][colID]
+    if (eraseMode === thisCell.living) {
+      toggleLife(thisCell, customGrid)
+      paintCell(customCtx, thisCell)
+    }
+  }
+}
+
+const clickDrawCustomListener = (e) => {
+  if (!isLocked) {
+    const [rowID, colID] = getRowColID(e)
+    const thisCell = customGrid[rowID][colID]
+    eraseMode = thisCell.living
+    setClickDrawCursor(customCanvas, eraseMode)
+    drawingCells = true
+    toggleLife(thisCell, customGrid)
+    paintCell(customCtx, thisCell)
+  }
+}
+
 // handles drawing/erasing cells in canvas
 canvas.addEventListener('mousemove', moveListener)
-document.addEventListener('mouseup', mouseUpListener)
+document.addEventListener('mouseup', mouseUpListener(canvas))
 canvas.addEventListener('mousedown', clickDrawStartListener)
 // handles pattern drag and drop
 for (const [id, node] of Object.entries(spaceshipNodes)) {
@@ -206,6 +261,11 @@ for (const [id, node] of Object.entries(spaceshipNodes)) {
 startButton.addEventListener('click', startListener)
 resetButton.addEventListener('click', resetListener)
 randomButton.addEventListener('click', randomListener)
+customButton.addEventListener('click', customListener)
+// custom pattern canvas behavior
+customCanvas.addEventListener('mousemove', moveCustomListener)
+document.addEventListener('mouseup', mouseUpListener(customCanvas))
+customCanvas.addEventListener('mousedown', clickDrawCustomListener)
 // reset cell ID display upon leaving canvas
 canvas.addEventListener('mouseout',() => {
   rowHover.innerHTML = '---'

@@ -3,19 +3,19 @@ import { CANVAS_WIDTH, CANVAS_HEIGHT, BOX_WIDTH, GRID_COLOR, LIVE_COLOR,
 import Cell from "./Cell"
 
 // set initial state
-export const drawGrid = (ctx, gridBoxes) => {
+export const drawGrid = (ctx, numRows, numCols) => {
   ctx.strokeStyle = GRID_COLOR
   ctx.clearRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT)
-  gridBoxes.forEach((row, rowID) => {
-    row.forEach((_, colID) => {
+  for (let rowID=0; rowID < numRows; rowID++){
+    for (let colID=0; colID<numCols; colID++){
       ctx.beginPath()
       ctx.rect(colID*BOX_WIDTH,rowID*BOX_WIDTH,BOX_WIDTH,BOX_WIDTH)
       ctx.stroke()
-    })
-  })
+    }
+  }
 }
 
-export const blankCellGrid = (w, h) => [...Array(w)].map((_,i)=>[...Array(h)].map((_,j)=>new Cell(i,j)))
+export const blankCellGrid = (w, h) => [...Array(w)].map((_,i)=>[...Array(h)].map((_,j)=>new Cell(i,j,w,h)))
 export const randomCellGrid = (w, h, density) => [...Array(w)].map(row=>[...Array(h)].map(cell=>Math.random()<density))
 
 // pure helper functions
@@ -96,3 +96,5 @@ export const placePattern = (ctx, grid, topRowID, leftColID, pattern) => {
     }
   }
 }
+
+export const getPatternFromGrid = (grid) => grid.map(row => row.map(cell => cell.living ? 1 : 0))
