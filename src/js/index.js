@@ -2,7 +2,7 @@ import { CANVAS_WIDTH, CANVAS_HEIGHT, BOX_WIDTH, maxRow, maxCol, RAND_DENSITY,
         spaceshipPatterns } from "./constants.js"
 import { blankCellGrid, getRowColID, fadeIn, paintCell, paintAllCells, isValidCell,
         getFillColor, updateNeighborsLivingNeighbors, toggleLife, placePattern,
-        drawDragPattern, drawGrid, randomCellGrid } from "./utilities.js"
+        drawDragPattern, drawGrid, randomCellGrid, getPatternFromGrid } from "./utilities.js"
 import Cell from "./Cell"
 
 const canvas = document.getElementById('mainCanvas')
@@ -202,17 +202,23 @@ const randomListener = (e) => {
 }
 
 let isLocked = true
+let customPattern, customDragPatternListener
 const customListener = (e) => {
   if (!isLocked) {
     customButton.innerHTML = "Edit"
     customButton.classList.toggle("edit-button", true)
     customButton.classList.toggle("lock-button", false)
     customCanvas.classList.toggle("locked-pattern", true)
+    customPattern = getPatternFromGrid(customGrid)
+    customDragPatternListener = dragPatternStartListener(customPattern, customCanvas)
+    customCanvas.addEventListener('mousedown', customDragPatternListener)
+
   } else {
     customButton.innerHTML = "Lock"
     customButton.classList.toggle("edit-button", false)
     customButton.classList.toggle("lock-button", true)
     customCanvas.classList.toggle("locked-pattern", false)
+    customCanvas.removeEventListener('mousedown', customDragPatternListener)
   }
   isLocked = !isLocked
 }
