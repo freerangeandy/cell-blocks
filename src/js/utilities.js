@@ -98,3 +98,8 @@ export const placePattern = (ctx, grid, topRowID, leftColID, pattern) => {
 }
 
 export const getPatternFromGrid = (grid) => grid.map(row => row.map(cell => cell.living ? 1 : 0))
+export const clonePatternFromGrid = (grid, topLeft, botRight) => {
+  return grid.slice(topLeft[0], botRight[0]).map(row => {
+    return row.slice(topLeft[1], botRight[1]).map(cell => cell.living ? 1 : 0)
+  })
+}
