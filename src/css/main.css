@@ -80,7 +80,7 @@ body {
   border: 3px solid #555555;
   background-color: #fffef6;
   cursor: pointer;
-  transition: all 0.2s;
+  transition: border 0.2s;
 }
 
 .custom-pattern {
