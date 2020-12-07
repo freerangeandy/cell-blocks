@@ -142,6 +142,8 @@ body {
   background-color: #606060;
 }
 
-.hidden {
-  display: none;
+.top-button[disabled] {
+  opacity: 0.3;
+  cursor: default;
+  pointer-events: none;
 }
