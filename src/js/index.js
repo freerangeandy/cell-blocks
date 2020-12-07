@@ -15,7 +15,9 @@ const randomButton = document.getElementById('randomButton')
 const spaceshipNodes = Object.fromEntries(new Map(
   Object.keys(spaceshipPatterns).map(id => [id, document.getElementById(id)])
 ))
+const lockButton = document.getElementById('lockButton')
 const editButton = document.getElementById('editButton')
+const cloneButton = document.getElementById('cloneButton')
 const customCanvas = document.getElementById('customCanvas')
 const customCtx = customCanvas.getContext('2d')
 
@@ -201,26 +203,36 @@ const randomListener = (e) => {
   paintAllCells(ctx, gridBoxes)
 }
 
-let isLocked = true
+const [LOCKED, EDITING, CLONING] = [0,1,2]
+let customState = LOCKED
 let customPattern, customDragPatternListener
-const editListener = (e) => {
-  if (!isLocked) {
-    editButton.innerHTML = "Edit"
-    editButton.classList.toggle("edit-button", true)
-    editButton.classList.toggle("lock-button", false)
-    customCanvas.classList.toggle("locked-pattern", true)
-    customPattern = getPatternFromGrid(customGrid)
-    customDragPatternListener = dragPatternStartListener(customPattern, customCanvas)
-    customCanvas.addEventListener('mousedown', customDragPatternListener)
+const lockListener = (e) => {
+  customState = LOCKED
+  customCanvas.classList.toggle("locked-pattern", true)
+  customPattern = getPatternFromGrid(customGrid)
+  customDragPatternListener = dragPatternStartListener(customPattern, customCanvas)
+  customCanvas.addEventListener('mousedown', customDragPatternListener)
+  lockButton.disabled = true
+  editButton.disabled = false
+  cloneButton.disabled = false
+}
 
-  } else {
-    editButton.innerHTML = "Lock"
-    editButton.classList.toggle("edit-button", false)
-    editButton.classList.toggle("lock-button", true)
-    customCanvas.classList.toggle("locked-pattern", false)
-    customCanvas.removeEventListener('mousedown', customDragPatternListener)
-  }
-  isLocked = !isLocked
+const editListener = (e) => {
+  customState = EDITING
+  customCanvas.classList.toggle("locked-pattern", false)
+  customCanvas.removeEventListener('mousedown', customDragPatternListener)
+  lockButton.disabled = false
+  editButton.disabled = true
+  cloneButton.disabled = false
+}
+
+const cloneListener = (e) => {
+  customState = CLONING
+  customCanvas.classList.toggle("locked-pattern", false)
+  customCanvas.removeEventListener('mousedown', customDragPatternListener)
+  lockButton.disabled = false
+  editButton.disabled = false
+  cloneButton.disabled = true
 }
 
 const moveCustomListener = (e) => {
@@ -237,7 +249,7 @@ const moveCustomListener = (e) => {
 }
 
 const clickDrawCustomListener = (e) => {
-  if (!isLocked) {
+  if (customState != LOCKED) {
     const [rowID, colID] = getRowColID(e)
     const thisCell = customGrid[rowID][colID]
     eraseMode = thisCell.living
@@ -257,11 +269,14 @@ for (const [id, node] of Object.entries(spaceshipNodes)) {
   node.addEventListener('mousedown', dragPatternStartListener(spaceshipPatterns[id], node))
   node.addEventListener('dragstart', () => false)
 }
-// handles button presses
+// handles button presses (main canvas)
 startButton.addEventListener('click', startListener)
 resetButton.addEventListener('click', resetListener)
 randomButton.addEventListener('click', randomListener)
+// handles button presses (custom canvas)
+lockButton.addEventListener('click', lockListener)
 editButton.addEventListener('click', editListener)
+cloneButton.addEventListener('click', cloneListener)
 // custom pattern canvas behavior
 customCanvas.addEventListener('mousemove', moveCustomListener)
 document.addEventListener('mouseup', mouseUpListener(customCanvas))
