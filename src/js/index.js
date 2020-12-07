@@ -277,28 +277,45 @@ const clickDrawCustomListener = (e) => {
 }
 
 let cloneSelecting = false
-let cloneTopLeft, cloneBotRight
+let cloneTopLeft, cloneBotRight, clonePattern
 const cloneStartListener = (e) => {
   const [rowID, colID] = getRowColID(e)
   cloneTopLeft = [rowID, colID]
-  cloneBotRight = [Math.min(cloneTopLeft[0]+5, maxRow-1), Math.min(cloneTopLeft[1]+5, maxCol-1)]
+  cloneBotRight = [Math.min(cloneTopLeft[0]+6, maxRow), Math.min(cloneTopLeft[1]+6, maxCol)]
+  clonePattern = clonePatternFromGrid(gridBoxes, cloneTopLeft, cloneBotRight)
+  cloneIntoCanvas(clonePattern)
   cloneSelecting = true
-  console.log(cloneTopLeft)
-  console.log(cloneBotRight)
+  // console.log(cloneTopLeft)
+  // console.log(cloneBotRight)
 }
 
 const cloneDragListener = (e) => {
   const [rowID, colID] = getRowColID(e)
   if (cloneSelecting && isValidCell(rowID, colID)) {
     cloneTopLeft = [rowID, colID]
-    cloneBotRight = [Math.min(cloneTopLeft[0]+5, maxRow-1), Math.min(cloneTopLeft[1]+5, maxCol-1)]
+    cloneBotRight = [Math.min(cloneTopLeft[0]+6, maxRow), Math.min(cloneTopLeft[1]+6, maxCol)]
+    clonePattern = clonePatternFromGrid(gridBoxes, cloneTopLeft, cloneBotRight)
+    cloneIntoCanvas(clonePattern)
   }
 }
 
 const cloneEndListener = (e) => {
   cloneSelecting = false
-  console.log(cloneTopLeft)
-  console.log(cloneBotRight)
+  // console.log(cloneTopLeft)
+  // console.log(cloneBotRight)
+}
+
+const cloneIntoCanvas = (pattern) => {
+  for (let i=0; i < pattern.length; i++) {
+    for (let j=0; j < pattern[0].length; j++) {
+      const thisCell = customGrid[i][j]
+      const patternVal = pattern[i][j]
+      if (thisCell.living != (patternVal === 1)) {
+        toggleLife(thisCell, customGrid)
+        paintCell(customCtx, thisCell)
+      }
+    }
+  }
 }
 
 // handles drawing/erasing cells in canvas
