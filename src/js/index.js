@@ -222,17 +222,26 @@ const setCustomState = (newState) => {
       customCanvas.addEventListener('mousedown', customDragPatternListener)
       canvas.classList.toggle("crosshairMode", false)
       canvas.addEventListener('mousedown', clickDrawStartListener)
-      break
+      canvas.removeEventListener('mousedown', cloneStartListener)
+      canvas.removeEventListener('mousemove', cloneDragListener)
+      document.removeEventListener('mouseup', cloneEndListener)
+    break
     case EDITING:
       customCanvas.removeEventListener('mousedown', customDragPatternListener)
       canvas.classList.toggle("crosshairMode", false)
       canvas.addEventListener('mousedown', clickDrawStartListener)
-      break
+      canvas.removeEventListener('mousedown', cloneStartListener)
+      canvas.removeEventListener('mousemove', cloneDragListener)
+      document.removeEventListener('mouseup', cloneEndListener)
+    break
     case CLONING:
       customCanvas.removeEventListener('mousedown', customDragPatternListener)
       canvas.classList.toggle("crosshairMode", true)
       canvas.removeEventListener('mousedown', clickDrawStartListener)
-      break
+      canvas.addEventListener('mousedown', cloneStartListener)
+      canvas.addEventListener('mousemove', cloneDragListener)
+      document.addEventListener('mouseup', cloneEndListener)
+    break
   }
   curCustomState = newState
 }
@@ -264,6 +273,31 @@ const clickDrawCustomListener = (e) => {
     toggleLife(thisCell, customGrid)
     paintCell(customCtx, thisCell)
   }
+}
+
+let cloneSelecting = false
+let cloneTopLeft, cloneBotRight
+const cloneStartListener = (e) => {
+  const [rowID, colID] = getRowColID(e)
+  cloneTopLeft = [rowID, colID]
+  cloneBotRight = [Math.min(cloneTopLeft[0]+5, maxRow-1), Math.min(cloneTopLeft[1]+5, maxCol-1)]
+  cloneSelecting = true
+  console.log(cloneTopLeft)
+  console.log(cloneBotRight)
+}
+
+const cloneDragListener = (e) => {
+  const [rowID, colID] = getRowColID(e)
+  if (cloneSelecting && isValidCell(rowID, colID)) {
+    cloneTopLeft = [rowID, colID]
+    cloneBotRight = [Math.min(cloneTopLeft[0]+5, maxRow-1), Math.min(cloneTopLeft[1]+5, maxCol-1)]
+  }
+}
+
+const cloneEndListener = (e) => {
+  cloneSelecting = false
+  console.log(cloneTopLeft)
+  console.log(cloneBotRight)
 }
 
 // handles drawing/erasing cells in canvas
