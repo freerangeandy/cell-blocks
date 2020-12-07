@@ -204,9 +204,11 @@ const randomListener = (e) => {
 }
 
 const [LOCKED, EDITING, CLONING] = [0,1,2]
+const customButtons = { [LOCKED]:lockButton, [EDITING]:editButton, [CLONING]:cloneButton }
 let customState = LOCKED
 let customPattern, customDragPatternListener
 const setCustomState = (newState) => {
+  for (let s in customButtons) customButtons[s].disabled = (s == newState) ? true : false
   customState = newState
   switch (newState) {
     case LOCKED:
@@ -214,23 +216,14 @@ const setCustomState = (newState) => {
       customPattern = getPatternFromGrid(customGrid)
       customDragPatternListener = dragPatternStartListener(customPattern, customCanvas)
       customCanvas.addEventListener('mousedown', customDragPatternListener)
-      lockButton.disabled = true
-      editButton.disabled = false
-      cloneButton.disabled = false
       break
     case EDITING:
       customCanvas.classList.toggle("locked-pattern", false)
       customCanvas.removeEventListener('mousedown', customDragPatternListener)
-      lockButton.disabled = false
-      editButton.disabled = true
-      cloneButton.disabled = false
       break
     case CLONING:
       customCanvas.classList.toggle("locked-pattern", false)
       customCanvas.removeEventListener('mousedown', customDragPatternListener)
-      lockButton.disabled = false
-      editButton.disabled = false
-      cloneButton.disabled = true
       break
   }
 }
