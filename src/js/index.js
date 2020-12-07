@@ -220,12 +220,18 @@ const setCustomState = (newState) => {
       customPattern = getPatternFromGrid(customGrid)
       customDragPatternListener = dragPatternStartListener(customPattern, customCanvas)
       customCanvas.addEventListener('mousedown', customDragPatternListener)
+      canvas.classList.toggle("crosshairMode", false)
+      canvas.addEventListener('mousedown', clickDrawStartListener)
       break
     case EDITING:
       customCanvas.removeEventListener('mousedown', customDragPatternListener)
+      canvas.classList.toggle("crosshairMode", false)
+      canvas.addEventListener('mousedown', clickDrawStartListener)
       break
     case CLONING:
       customCanvas.removeEventListener('mousedown', customDragPatternListener)
+      canvas.classList.toggle("crosshairMode", true)
+      canvas.removeEventListener('mousedown', clickDrawStartListener)
       break
   }
   curCustomState = newState
