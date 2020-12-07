@@ -15,7 +15,7 @@ const randomButton = document.getElementById('randomButton')
 const spaceshipNodes = Object.fromEntries(new Map(
   Object.keys(spaceshipPatterns).map(id => [id, document.getElementById(id)])
 ))
-const customButton = document.getElementById('customButton')
+const editButton = document.getElementById('editButton')
 const customCanvas = document.getElementById('customCanvas')
 const customCtx = customCanvas.getContext('2d')
 
@@ -203,20 +203,20 @@ const randomListener = (e) => {
 
 let isLocked = true
 let customPattern, customDragPatternListener
-const customListener = (e) => {
+const editListener = (e) => {
   if (!isLocked) {
-    customButton.innerHTML = "Edit"
-    customButton.classList.toggle("edit-button", true)
-    customButton.classList.toggle("lock-button", false)
+    editButton.innerHTML = "Edit"
+    editButton.classList.toggle("edit-button", true)
+    editButton.classList.toggle("lock-button", false)
     customCanvas.classList.toggle("locked-pattern", true)
     customPattern = getPatternFromGrid(customGrid)
     customDragPatternListener = dragPatternStartListener(customPattern, customCanvas)
     customCanvas.addEventListener('mousedown', customDragPatternListener)
 
   } else {
-    customButton.innerHTML = "Lock"
-    customButton.classList.toggle("edit-button", false)
-    customButton.classList.toggle("lock-button", true)
+    editButton.innerHTML = "Lock"
+    editButton.classList.toggle("edit-button", false)
+    editButton.classList.toggle("lock-button", true)
     customCanvas.classList.toggle("locked-pattern", false)
     customCanvas.removeEventListener('mousedown', customDragPatternListener)
   }
@@ -261,7 +261,7 @@ for (const [id, node] of Object.entries(spaceshipNodes)) {
 startButton.addEventListener('click', startListener)
 resetButton.addEventListener('click', resetListener)
 randomButton.addEventListener('click', randomListener)
-customButton.addEventListener('click', customListener)
+editButton.addEventListener('click', editListener)
 // custom pattern canvas behavior
 customCanvas.addEventListener('mousemove', moveCustomListener)
 document.addEventListener('mouseup', mouseUpListener(customCanvas))
