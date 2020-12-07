@@ -204,34 +204,31 @@ const randomListener = (e) => {
 }
 
 const [LOCKED, EDITING, CLONING] = [0,1,2]
-const customButtons = { [LOCKED]:lockButton, [EDITING]:editButton, [CLONING]:cloneButton }
-let customState = LOCKED
+const customStates = [{ button: lockButton, class: "locked-pattern" },
+                      { button: editButton, class: "editing-pattern" },
+                      { button: cloneButton, class: "cloning-pattern" }]
+let curCustomState = LOCKED
 let customPattern, customDragPatternListener
 const setCustomState = (newState) => {
-  for (let s in customButtons) customButtons[s].disabled = (s == newState) ? true : false
-  customState = newState
+  customStates.forEach((stateProps, state) => {
+    const isNewState = (state == newState)
+    stateProps.button.disabled = isNewState
+    customCanvas.classList.toggle(stateProps.class, isNewState)
+  })
   switch (newState) {
     case LOCKED:
-      customCanvas.classList.toggle("locked-pattern", true)
-      customCanvas.classList.toggle("editing-pattern", false)
-      customCanvas.classList.toggle("cloning-pattern", false)
       customPattern = getPatternFromGrid(customGrid)
       customDragPatternListener = dragPatternStartListener(customPattern, customCanvas)
       customCanvas.addEventListener('mousedown', customDragPatternListener)
       break
     case EDITING:
-      customCanvas.classList.toggle("locked-pattern", false)
-      customCanvas.classList.toggle("editing-pattern", true)
-      customCanvas.classList.toggle("cloning-pattern", false)
       customCanvas.removeEventListener('mousedown', customDragPatternListener)
       break
     case CLONING:
-      customCanvas.classList.toggle("locked-pattern", false)
-      customCanvas.classList.toggle("editing-pattern", false)
-      customCanvas.classList.toggle("cloning-pattern", true)
       customCanvas.removeEventListener('mousedown', customDragPatternListener)
       break
   }
+  curCustomState = newState
 }
 
 const lockListener = (e) => { setCustomState(LOCKED) }
@@ -252,7 +249,7 @@ const moveCustomListener = (e) => {
 }
 
 const clickDrawCustomListener = (e) => {
-  if (customState != LOCKED) {
+  if (curCustomState != LOCKED) {
     const [rowID, colID] = getRowColID(e)
     const thisCell = customGrid[rowID][colID]
     eraseMode = thisCell.living
