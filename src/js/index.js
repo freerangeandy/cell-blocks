@@ -306,10 +306,10 @@ const cloneEndListener = (e) => {
 }
 
 const cloneIntoCanvas = (pattern) => {
-  for (let i=0; i < pattern.length; i++) {
-    for (let j=0; j < pattern[0].length; j++) {
+  for (let i=0; i < 6; i++) {
+    for (let j=0; j < 6; j++) {
       const thisCell = customGrid[i][j]
-      const patternVal = pattern[i][j]
+      const patternVal = i < pattern.length && j < pattern[0].length ? pattern[i][j] : 0
       if (thisCell.living != (patternVal === 1)) {
         toggleLife(thisCell, customGrid)
         paintCell(customCtx, thisCell)
