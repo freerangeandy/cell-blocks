@@ -213,16 +213,22 @@ const setCustomState = (newState) => {
   switch (newState) {
     case LOCKED:
       customCanvas.classList.toggle("locked-pattern", true)
+      customCanvas.classList.toggle("editing-pattern", false)
+      customCanvas.classList.toggle("cloning-pattern", false)
       customPattern = getPatternFromGrid(customGrid)
       customDragPatternListener = dragPatternStartListener(customPattern, customCanvas)
       customCanvas.addEventListener('mousedown', customDragPatternListener)
       break
     case EDITING:
       customCanvas.classList.toggle("locked-pattern", false)
+      customCanvas.classList.toggle("editing-pattern", true)
+      customCanvas.classList.toggle("cloning-pattern", false)
       customCanvas.removeEventListener('mousedown', customDragPatternListener)
       break
     case CLONING:
       customCanvas.classList.toggle("locked-pattern", false)
+      customCanvas.classList.toggle("editing-pattern", false)
+      customCanvas.classList.toggle("cloning-pattern", true)
       customCanvas.removeEventListener('mousedown', customDragPatternListener)
       break
   }
