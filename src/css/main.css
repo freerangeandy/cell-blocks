@@ -139,5 +139,9 @@ body {
 }
 
 .lock-button {
-  background-color: #ef4161;
+  background-color: #606060;
+}
+
+.hidden {
+  display: none;
 }
