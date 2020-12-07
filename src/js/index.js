@@ -206,34 +206,38 @@ const randomListener = (e) => {
 const [LOCKED, EDITING, CLONING] = [0,1,2]
 let customState = LOCKED
 let customPattern, customDragPatternListener
-const lockListener = (e) => {
-  customState = LOCKED
-  customCanvas.classList.toggle("locked-pattern", true)
-  customPattern = getPatternFromGrid(customGrid)
-  customDragPatternListener = dragPatternStartListener(customPattern, customCanvas)
-  customCanvas.addEventListener('mousedown', customDragPatternListener)
-  lockButton.disabled = true
-  editButton.disabled = false
-  cloneButton.disabled = false
+const setCustomState = (newState) => {
+  customState = newState
+  switch (newState) {
+    case LOCKED:
+      customCanvas.classList.toggle("locked-pattern", true)
+      customPattern = getPatternFromGrid(customGrid)
+      customDragPatternListener = dragPatternStartListener(customPattern, customCanvas)
+      customCanvas.addEventListener('mousedown', customDragPatternListener)
+      lockButton.disabled = true
+      editButton.disabled = false
+      cloneButton.disabled = false
+      break
+    case EDITING:
+      customCanvas.classList.toggle("locked-pattern", false)
+      customCanvas.removeEventListener('mousedown', customDragPatternListener)
+      lockButton.disabled = false
+      editButton.disabled = true
+      cloneButton.disabled = false
+      break
+    case CLONING:
+      customCanvas.classList.toggle("locked-pattern", false)
+      customCanvas.removeEventListener('mousedown', customDragPatternListener)
+      lockButton.disabled = false
+      editButton.disabled = false
+      cloneButton.disabled = true
+      break
+  }
 }
 
-const editListener = (e) => {
-  customState = EDITING
-  customCanvas.classList.toggle("locked-pattern", false)
-  customCanvas.removeEventListener('mousedown', customDragPatternListener)
-  lockButton.disabled = false
-  editButton.disabled = true
-  cloneButton.disabled = false
-}
-
-const cloneListener = (e) => {
-  customState = CLONING
-  customCanvas.classList.toggle("locked-pattern", false)
-  customCanvas.removeEventListener('mousedown', customDragPatternListener)
-  lockButton.disabled = false
-  editButton.disabled = false
-  cloneButton.disabled = true
-}
+const lockListener = (e) => { setCustomState(LOCKED) }
+const editListener = (e) => { setCustomState(EDITING) }
+const cloneListener = (e) => { setCustomState(CLONING) }
 
 const moveCustomListener = (e) => {
   const [rowID, colID] = getRowColID(e)
