@@ -1,5 +1,5 @@
 import { CANVAS_WIDTH, CANVAS_HEIGHT, BOX_WIDTH, maxRow, maxCol, RAND_DENSITY,
-        spaceshipPatterns } from "./constants.js"
+        spaceshipPatterns, LOCKED, EDITING, CLONING } from "./constants.js"
 import { blankCellGrid, getRowColID, fadeIn, paintCell, paintAllCells, isValidCell,
         getFillColor, updateNeighborsLivingNeighbors, toggleLife, placePattern,
         drawDragPattern, drawGrid, randomCellGrid, getPatternFromGrid,
@@ -204,7 +204,6 @@ const randomListener = (e) => {
   paintAllCells(ctx, gridBoxes)
 }
 
-const [LOCKED, EDITING, CLONING] = [0,1,2]
 const customStates = [{ button: lockButton, class: "locked-pattern" },
                       { button: editButton, class: "editing-pattern" },
                       { button: cloneButton, class: "cloning-pattern" }]
@@ -285,8 +284,6 @@ const cloneStartListener = (e) => {
   clonePattern = clonePatternFromGrid(gridBoxes, cloneTopLeft, cloneBotRight)
   cloneIntoCanvas(customCtx, customGrid, clonePattern)
   cloneSelecting = true
-  // console.log(cloneTopLeft)
-  // console.log(cloneBotRight)
 }
 
 const cloneDragListener = (e) => {
@@ -301,8 +298,6 @@ const cloneDragListener = (e) => {
 
 const cloneEndListener = (e) => {
   cloneSelecting = false
-  // console.log(cloneTopLeft)
-  // console.log(cloneBotRight)
 }
 
 // handles drawing/erasing cells in canvas

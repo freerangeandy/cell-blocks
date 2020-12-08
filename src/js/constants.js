@@ -43,3 +43,5 @@ export const spaceshipPatterns = {
   [MWSS_ID]: MWSS_PATTERN,
   [HWSS_ID]: HWSS_PATTERN
 }
+
+export const [LOCKED, EDITING, CLONING] = [0,1,2]
