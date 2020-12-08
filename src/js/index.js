@@ -22,8 +22,8 @@ const cloneButton = document.getElementById('cloneButton')
 const customCanvas = document.getElementById('customCanvas')
 const customCtx = customCanvas.getContext('2d')
 
-let gridBoxes
-let customGrid
+/* DRAW CANVASES */
+let gridBoxes, customGrid
 const init = () => {
   gridBoxes = blankCellGrid(maxRow, maxCol)
   drawGrid(ctx, maxRow, maxCol)
@@ -38,7 +38,7 @@ const init = () => {
   drawGrid(customCtx, 6, 6)
 }
 
-// go through the conway life cycle:
+/* CONWAY LIFE CYCLE */
 //  1. for all cells, determine next state based on current state, # living neighbors
 //  2. store next state in Cell instance variable
 //  3. loop cell by cell, keep/flip state based on stored next state
@@ -72,7 +72,43 @@ const animate = () => {
   fadeIn(() => paintAllCells(ctx, gridBoxes), ctx, 8)
 }
 
-// event handlers
+/* MAIN CANVAS */
+// button click handlers
+let isRunning = false
+let animator
+const startListener = (e) => {
+  if (!isRunning) {
+    animator = setInterval(animate, 500)
+    startButton.innerHTML = "Pause"
+    startButton.classList.toggle("pause-button", true)
+    startButton.classList.toggle("start-button", false)
+  } else {
+    clearInterval(animator)
+    startButton.innerHTML = "Start"
+    startButton.classList.toggle("pause-button", false)
+    startButton.classList.toggle("start-button", true)
+  }
+  isRunning = !isRunning
+}
+
+const resetListener = (e) => {
+  gridBoxes = blankCellGrid(maxRow, maxCol)
+  paintAllCells(ctx, gridBoxes)
+}
+
+const randomListener = (e) => {
+  const seedArray = randomCellGrid(maxRow, maxCol, RAND_DENSITY)
+  gridBoxes.forEach((row, rowID) => {
+    row.forEach((thisCell, colID) => {
+      if (thisCell.living !== seedArray[rowID][colID]) {
+        toggleLife(thisCell, gridBoxes)
+      }
+    })
+  })
+  paintAllCells(ctx, gridBoxes)
+}
+
+// mouse event handlers
 let drawingCells = false
 let eraseMode = false
 const clickDrawStartListener = (e) => {
@@ -157,46 +193,12 @@ const dropPattern = (e, shiftX, shiftY, pattern) => {
   }
 }
 
-// button event listeners
-let isRunning = false
-let animator
-const startListener = (e) => {
-  if (!isRunning) {
-    animator = setInterval(animate, 500)
-    startButton.innerHTML = "Pause"
-    startButton.classList.toggle("pause-button", true)
-    startButton.classList.toggle("start-button", false)
-  } else {
-    clearInterval(animator)
-    startButton.innerHTML = "Start"
-    startButton.classList.toggle("pause-button", false)
-    startButton.classList.toggle("start-button", true)
-  }
-  isRunning = !isRunning
-}
-
-const resetListener = (e) => {
-  gridBoxes = blankCellGrid(maxRow, maxCol)
-  paintAllCells(ctx, gridBoxes)
-}
-
-const randomListener = (e) => {
-  const seedArray = randomCellGrid(maxRow, maxCol, RAND_DENSITY)
-  gridBoxes.forEach((row, rowID) => {
-    row.forEach((thisCell, colID) => {
-      if (thisCell.living !== seedArray[rowID][colID]) {
-        toggleLife(thisCell, gridBoxes)
-      }
-    })
-  })
-  paintAllCells(ctx, gridBoxes)
-}
-
+/* CUSTOM CANVAS */
 const customStates = [{ button: lockButton, class: "locked-pattern" },
                       { button: editButton, class: "editing-pattern" },
                       { button: cloneButton, class: "cloning-pattern" }]
 let curCustomState = LOCKED
-let customPattern, customDragPatternListener
+let customDragPatternListener
 const setCustomState = (newState) => {
   customStates.forEach((stateProps, state) => {
     const isNewState = (state == newState)
@@ -205,7 +207,7 @@ const setCustomState = (newState) => {
   })
   switch (newState) {
     case LOCKED:
-      customPattern = getPatternFromGrid(customGrid)
+      let customPattern = getPatternFromGrid(customGrid)
       customDragPatternListener = dragPatternStartListener(customPattern, customCanvas)
       customCanvas.addEventListener('mousedown', customDragPatternListener)
       canvas.classList.toggle("crosshairMode", false)
@@ -234,10 +236,12 @@ const setCustomState = (newState) => {
   curCustomState = newState
 }
 
+// button click handlers
 const lockListener = (e) => { setCustomState(LOCKED) }
 const editListener = (e) => { setCustomState(EDITING) }
 const cloneListener = (e) => { setCustomState(CLONING) }
 
+// mouse event handlers
 const moveCustomListener = (e) => {
   const [rowID, colID] = getRowColID(e)
   rowHover.innerHTML = rowID
@@ -288,6 +292,7 @@ const cloneEndListener = (e) => {
   cloneSelecting = false
 }
 
+/* EVENT LISTENER ASSIGNMENTS */
 // handles drawing/erasing cells in canvas
 canvas.addEventListener('mousemove', moveListener)
 document.addEventListener('mouseup', mouseUpListener(canvas))
@@ -315,5 +320,5 @@ canvas.addEventListener('mouseout',() => {
   colHover.innerHTML = '---'
 })
 
-// when browser loads script
+/* run upon loading script */
 init()
