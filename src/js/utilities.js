@@ -64,6 +64,18 @@ export const toggleLife = (cell, grid) => {
   updateNeighborsLivingNeighbors(cell, grid)
 }
 
+export const setClickDrawCursor = (canvasNode, eraseMode) => {
+  if (eraseMode === undefined) {
+    canvasNode.classList.remove('eraseMode', 'pencilMode')
+  } else if (eraseMode) {
+    canvasNode.classList.add('eraseMode')
+    canvasNode.classList.remove('pencilMode')
+  } else {
+    canvasNode.classList.add('pencilMode')
+    canvasNode.classList.remove('eraseMode')
+  }
+}
+
 // drag/drop patterns onto canvas
 export const drawDragPattern = (patternCanvas, patternScheme) => {
   const patternCtx = patternCanvas.getContext('2d')

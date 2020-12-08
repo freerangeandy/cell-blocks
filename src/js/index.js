@@ -1,8 +1,8 @@
 import { CANVAS_WIDTH, CANVAS_HEIGHT, BOX_WIDTH, maxRow, maxCol, RAND_DENSITY,
         spaceshipPatterns, LOCKED, EDITING, CLONING } from "./constants.js"
 import { blankCellGrid, getRowColID, fadeIn, paintCell, paintAllCells, isValidCell,
-        getFillColor, updateNeighborsLivingNeighbors, toggleLife, placePattern,
-        drawDragPattern, drawGrid, randomCellGrid, getPatternFromGrid,
+        getFillColor, updateNeighborsLivingNeighbors, toggleLife, setClickDrawCursor,
+        placePattern, drawDragPattern, drawGrid, randomCellGrid, getPatternFromGrid,
         clonePatternFromGrid, cloneIntoCanvas } from "./utilities.js"
 import Cell from "./Cell"
 
@@ -70,18 +70,6 @@ const animate = () => {
   setNextStates()
   applyNextStates()
   fadeIn(() => paintAllCells(ctx, gridBoxes), ctx, 8)
-}
-
-const setClickDrawCursor = (canvasNode, eraseMode) => {
-  if (eraseMode === undefined) {
-    canvasNode.classList.remove('eraseMode', 'pencilMode')
-  } else if (eraseMode) {
-    canvasNode.classList.add('eraseMode')
-    canvasNode.classList.remove('pencilMode')
-  } else {
-    canvasNode.classList.add('pencilMode')
-    canvasNode.classList.remove('eraseMode')
-  }
 }
 
 // event handlers
