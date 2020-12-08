@@ -3,7 +3,7 @@ import { CANVAS_WIDTH, CANVAS_HEIGHT, BOX_WIDTH, maxRow, maxCol, RAND_DENSITY,
 import { blankCellGrid, getRowColID, fadeIn, paintCell, paintAllCells, isValidCell,
         getFillColor, updateNeighborsLivingNeighbors, toggleLife, placePattern,
         drawDragPattern, drawGrid, randomCellGrid, getPatternFromGrid,
-        clonePatternFromGrid } from "./utilities.js"
+        clonePatternFromGrid, cloneIntoCanvas } from "./utilities.js"
 import Cell from "./Cell"
 
 const canvas = document.getElementById('mainCanvas')
@@ -283,7 +283,7 @@ const cloneStartListener = (e) => {
   cloneTopLeft = [rowID, colID]
   cloneBotRight = [Math.min(cloneTopLeft[0]+6, maxRow), Math.min(cloneTopLeft[1]+6, maxCol)]
   clonePattern = clonePatternFromGrid(gridBoxes, cloneTopLeft, cloneBotRight)
-  cloneIntoCanvas(clonePattern)
+  cloneIntoCanvas(customCtx, customGrid, clonePattern)
   cloneSelecting = true
   // console.log(cloneTopLeft)
   // console.log(cloneBotRight)
@@ -295,7 +295,7 @@ const cloneDragListener = (e) => {
     cloneTopLeft = [rowID, colID]
     cloneBotRight = [Math.min(cloneTopLeft[0]+6, maxRow), Math.min(cloneTopLeft[1]+6, maxCol)]
     clonePattern = clonePatternFromGrid(gridBoxes, cloneTopLeft, cloneBotRight)
-    cloneIntoCanvas(clonePattern)
+    cloneIntoCanvas(customCtx, customGrid, clonePattern)
   }
 }
 
@@ -303,19 +303,6 @@ const cloneEndListener = (e) => {
   cloneSelecting = false
   // console.log(cloneTopLeft)
   // console.log(cloneBotRight)
-}
-
-const cloneIntoCanvas = (pattern) => {
-  for (let i=0; i < 6; i++) {
-    for (let j=0; j < 6; j++) {
-      const thisCell = customGrid[i][j]
-      const patternVal = i < pattern.length && j < pattern[0].length ? pattern[i][j] : 0
-      if (thisCell.living != (patternVal === 1)) {
-        toggleLife(thisCell, customGrid)
-        paintCell(customCtx, thisCell)
-      }
-    }
-  }
 }
 
 // handles drawing/erasing cells in canvas

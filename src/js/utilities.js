@@ -97,6 +97,19 @@ export const placePattern = (ctx, grid, topRowID, leftColID, pattern) => {
   }
 }
 
+export const cloneIntoCanvas = (ctx, grid, pattern) => {
+  for (let i=0; i < 6; i++) {
+    for (let j=0; j < 6; j++) {
+      const thisCell = grid[i][j]
+      const patternVal = i < pattern.length && j < pattern[0].length ? pattern[i][j] : 0
+      if (thisCell.living != (patternVal === 1)) {
+        toggleLife(thisCell, grid)
+        paintCell(ctx, thisCell)
+      }
+    }
+  }
+}
+
 export const getPatternFromGrid = (grid) => grid.map(row => row.map(cell => cell.living ? 1 : 0))
 export const clonePatternFromGrid = (grid, topLeft, botRight) => {
   return grid.slice(topLeft[0], botRight[0]).map(row => {
