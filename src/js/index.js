@@ -245,7 +245,8 @@ const moveCustomListener = (e) => {
 }
 
 const clickDrawCustomListener = (e) => {
-  if (curCustomState != LOCKED) {
+  if (curCustomState == CLONING) setCustomState(EDITING)
+  if (curCustomState == EDITING) {
     const [rowID, colID] = getRowColID(e)
     const thisCell = customGrid[rowID][colID]
     eraseMode = thisCell.living
