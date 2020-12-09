@@ -257,11 +257,22 @@ const clickDrawCustomListener = (e) => {
 }
 
 let cloneSelecting = false
-let cloneTopLeft, cloneBotRight, clonePattern
+let cloneTopLeft, cloneBotRight, clonePattern, cloneFrame
 const cloneStartListener = (e) => {
   const [rowID, colID] = getRowColID(e)
+  if (!cloneFrame) {
+    cloneFrame = document.createElement('div')
+    cloneFrame.setAttribute('id', 'cloneFrame')
+    cloneFrame.style.position = 'absolute'
+    cloneFrame.style.zIndex = 1000
+    cloneFrame.style.width = BOX_WIDTH*6 + 'px'
+    cloneFrame.style.height = BOX_WIDTH*6 + 'px'
+    cloneFrame.style.border = '3px solid #59cbda'
+    document.body.appendChild(cloneFrame)
+  }
   cloneTopLeft = [rowID, colID]
   cloneBotRight = [Math.min(cloneTopLeft[0]+6, maxRow), Math.min(cloneTopLeft[1]+6, maxCol)]
+  drawCloneFrame(rowID, colID)
   clonePattern = clonePatternFromGrid(gridBoxes, cloneTopLeft, cloneBotRight)
   cloneIntoCanvas(customCtx, customGrid, clonePattern)
   cloneSelecting = true
@@ -272,6 +283,7 @@ const cloneDragListener = (e) => {
   if (cloneSelecting && isValidCell(rowID, colID)) {
     cloneTopLeft = [rowID, colID]
     cloneBotRight = [Math.min(cloneTopLeft[0]+6, maxRow), Math.min(cloneTopLeft[1]+6, maxCol)]
+    drawCloneFrame(rowID, colID)
     clonePattern = clonePatternFromGrid(gridBoxes, cloneTopLeft, cloneBotRight)
     cloneIntoCanvas(customCtx, customGrid, clonePattern)
   }
@@ -279,6 +291,19 @@ const cloneDragListener = (e) => {
 
 const cloneEndListener = (e) => {
   cloneSelecting = false
+  if (cloneFrame) {
+    document.body.removeChild(cloneFrame)
+    cloneFrame = null
+  }
+}
+
+const drawCloneFrame = (rowID, colID) => {
+  const pageX = canvas.getBoundingClientRect().left
+  const pageY = canvas.getBoundingClientRect().top
+  const shiftX = colID*BOX_WIDTH
+  const shiftY = rowID*BOX_WIDTH
+  cloneFrame.style.left = pageX + shiftX + 'px'
+  cloneFrame.style.top = pageY + shiftY + 'px'
 }
 
 /* EVENT LISTENER ASSIGNMENTS */
