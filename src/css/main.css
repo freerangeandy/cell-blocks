@@ -8,7 +8,7 @@ body {
   flex-direction: row;
   justify-content: space-evenly;
   align-items: baseline;
-  margin-bottom: 1em;
+  margin-bottom: 0.5em;
 }
 
 .top-button {
@@ -16,7 +16,7 @@ body {
   min-width: 80px;
   height: 30px;
   padding: 0.3em 1.2em;
-  margin: 0 0.1em 0.1em 0;
+  margin: 0 0.1em 0.4em 0;
   outline: none;
   border: 0.16em solid rgba(0, 0, 0, 0.1);
   border-radius: 0.8em;
@@ -32,6 +32,12 @@ body {
 
 .top-button:hover {
   border-color: rgba(255, 254, 246, 1);
+}
+
+.top-button[disabled] {
+  opacity: 0.3;
+  cursor: default;
+  pointer-events: none;
 }
 
 .start-button {
@@ -74,6 +80,7 @@ body {
   border: 3px solid #555555;
   background-color: #fffef6;
   cursor: pointer;
+  transition: border 0.2s;
 }
 
 .custom-pattern {
@@ -86,6 +93,10 @@ body {
 
 .eraseMode {
   cursor: url(../assets/eraser.cur), pointer;
+}
+
+.crosshairMode {
+  cursor: crosshair;
 }
 
 .originPattern {
@@ -112,6 +123,12 @@ body {
   border-left: 2px solid rgba(0,0,0,0.3);
 }
 
+.custom-area div {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
 .custom-area div h4 {
   margin: 0 0 6px 0;
   font-family: 'Roboto', sans-serif;
@@ -120,16 +137,26 @@ body {
   text-align: center;
 }
 
-
-
 .locked-pattern {
   cursor: grab;
+}
+
+.editing-pattern {
+  border-color: #81da6b;
+}
+
+.cloning-pattern {
+  border-color: #59cbda;
 }
 
 .edit-button {
   background-color: #81da6b;
 }
 
+.clone-button {
+  background-color: #59cbda;
+}
+
 .lock-button {
-  background-color: #ef4161;
+  background-color: #606060;
 }

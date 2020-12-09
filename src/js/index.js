@@ -1,8 +1,9 @@
 import { CANVAS_WIDTH, CANVAS_HEIGHT, BOX_WIDTH, maxRow, maxCol, RAND_DENSITY,
-        spaceshipPatterns } from "./constants.js"
+        spaceshipPatterns, LOCKED, EDITING, CLONING } from "./constants.js"
 import { blankCellGrid, getRowColID, fadeIn, paintCell, paintAllCells, isValidCell,
-        getFillColor, updateNeighborsLivingNeighbors, toggleLife, placePattern,
-        drawDragPattern, drawGrid, randomCellGrid, getPatternFromGrid } from "./utilities.js"
+        getFillColor, updateNeighborsLivingNeighbors, toggleLife, setClickDrawCursor,
+        dropPattern, placePattern, drawDragPattern, drawGrid, randomCellGrid,
+        getPatternFromGrid, clonePatternFromGrid, cloneIntoCanvas } from "./utilities.js"
 import Cell from "./Cell"
 
 const canvas = document.getElementById('mainCanvas')
@@ -15,12 +16,14 @@ const randomButton = document.getElementById('randomButton')
 const spaceshipNodes = Object.fromEntries(new Map(
   Object.keys(spaceshipPatterns).map(id => [id, document.getElementById(id)])
 ))
-const customButton = document.getElementById('customButton')
+const lockButton = document.getElementById('lockButton')
+const editButton = document.getElementById('editButton')
+const cloneButton = document.getElementById('cloneButton')
 const customCanvas = document.getElementById('customCanvas')
 const customCtx = customCanvas.getContext('2d')
 
-let gridBoxes
-let customGrid
+/* DRAW CANVASES */
+let gridBoxes, customGrid
 const init = () => {
   gridBoxes = blankCellGrid(maxRow, maxCol)
   drawGrid(ctx, maxRow, maxCol)
@@ -35,7 +38,7 @@ const init = () => {
   drawGrid(customCtx, 6, 6)
 }
 
-// go through the conway life cycle:
+/* CONWAY LIFE CYCLE */
 //  1. for all cells, determine next state based on current state, # living neighbors
 //  2. store next state in Cell instance variable
 //  3. loop cell by cell, keep/flip state based on stored next state
@@ -69,19 +72,43 @@ const animate = () => {
   fadeIn(() => paintAllCells(ctx, gridBoxes), ctx, 8)
 }
 
-const setClickDrawCursor = (canvasNode, eraseMode) => {
-  if (eraseMode === undefined) {
-    canvasNode.classList.remove('eraseMode', 'pencilMode')
-  } else if (eraseMode) {
-    canvasNode.classList.add('eraseMode')
-    canvasNode.classList.remove('pencilMode')
+/* MAIN CANVAS */
+// button click handlers
+let isRunning = false
+let animator
+const startListener = (e) => {
+  if (!isRunning) {
+    animator = setInterval(animate, 500)
+    startButton.innerHTML = "Pause"
+    startButton.classList.toggle("pause-button", true)
+    startButton.classList.toggle("start-button", false)
   } else {
-    canvasNode.classList.add('pencilMode')
-    canvasNode.classList.remove('eraseMode')
+    clearInterval(animator)
+    startButton.innerHTML = "Start"
+    startButton.classList.toggle("pause-button", false)
+    startButton.classList.toggle("start-button", true)
   }
+  isRunning = !isRunning
 }
 
-// event handlers
+const resetListener = (e) => {
+  gridBoxes = blankCellGrid(maxRow, maxCol)
+  paintAllCells(ctx, gridBoxes)
+}
+
+const randomListener = (e) => {
+  const seedArray = randomCellGrid(maxRow, maxCol, RAND_DENSITY)
+  gridBoxes.forEach((row, rowID) => {
+    row.forEach((thisCell, colID) => {
+      if (thisCell.living !== seedArray[rowID][colID]) {
+        toggleLife(thisCell, gridBoxes)
+      }
+    })
+  })
+  paintAllCells(ctx, gridBoxes)
+}
+
+// mouse event handlers
 let drawingCells = false
 let eraseMode = false
 const clickDrawStartListener = (e) => {
@@ -142,7 +169,9 @@ const dragPatternStartListener = (pattern, originNode) => (e) => {
     document.removeEventListener('mousemove', movePatternListener)
     document.removeEventListener('mouseup', dropPatternListener)
     if (clonedYet) {
-      dropPattern(e, shiftX, shiftY, pattern)
+      const offsetX = e.clientX - shiftX - canvas.getBoundingClientRect().left
+      const offsetY = e.clientY - shiftY - canvas.getBoundingClientRect().top
+      dropPattern(ctx, gridBoxes, offsetX, offsetY, pattern)
       document.body.removeChild(dragImage)
       dragImage = null
       clonedYet = false
@@ -153,76 +182,55 @@ const dragPatternStartListener = (pattern, originNode) => (e) => {
   document.addEventListener('mouseup', dropPatternListener)
 }
 
-const dropPattern = (e, shiftX, shiftY, pattern) => {
-  let offsetX = e.clientX - shiftX - canvas.getBoundingClientRect().left
-  let offsetY = e.clientY - shiftY - canvas.getBoundingClientRect().top
-
-  const topRow = Math.round(offsetY/BOX_WIDTH + 0.4)
-  const leftCol = Math.round(offsetX/BOX_WIDTH + 0.1)
-  const botRow = topRow + pattern.length - 1
-  const rightCol = leftCol + pattern[0].length - 1
-  if (isValidCell(topRow, leftCol) && isValidCell(botRow, rightCol)) {
-    placePattern(ctx, gridBoxes, topRow, leftCol, pattern)
-  }
-}
-
-// button event listeners
-let isRunning = false
-let animator
-const startListener = (e) => {
-  if (!isRunning) {
-    animator = setInterval(animate, 500)
-    startButton.innerHTML = "Pause"
-    startButton.classList.toggle("pause-button", true)
-    startButton.classList.toggle("start-button", false)
-  } else {
-    clearInterval(animator)
-    startButton.innerHTML = "Start"
-    startButton.classList.toggle("pause-button", false)
-    startButton.classList.toggle("start-button", true)
-  }
-  isRunning = !isRunning
-}
-
-const resetListener = (e) => {
-  gridBoxes = blankCellGrid(maxRow, maxCol)
-  paintAllCells(ctx, gridBoxes)
-}
-
-const randomListener = (e) => {
-  const seedArray = randomCellGrid(maxRow, maxCol, RAND_DENSITY)
-  gridBoxes.forEach((row, rowID) => {
-    row.forEach((thisCell, colID) => {
-      if (thisCell.living !== seedArray[rowID][colID]) {
-        toggleLife(thisCell, gridBoxes)
-      }
-    })
+/* CUSTOM CANVAS */
+const customStates = [{ button: lockButton, class: "locked-pattern" },
+                      { button: editButton, class: "editing-pattern" },
+                      { button: cloneButton, class: "cloning-pattern" }]
+let curCustomState = LOCKED
+let customDragPatternListener
+const setCustomState = (newState) => {
+  customStates.forEach((stateProps, state) => {
+    const isNewState = (state == newState)
+    stateProps.button.disabled = isNewState
+    customCanvas.classList.toggle(stateProps.class, isNewState)
   })
-  paintAllCells(ctx, gridBoxes)
-}
-
-let isLocked = true
-let customPattern, customDragPatternListener
-const customListener = (e) => {
-  if (!isLocked) {
-    customButton.innerHTML = "Edit"
-    customButton.classList.toggle("edit-button", true)
-    customButton.classList.toggle("lock-button", false)
-    customCanvas.classList.toggle("locked-pattern", true)
-    customPattern = getPatternFromGrid(customGrid)
-    customDragPatternListener = dragPatternStartListener(customPattern, customCanvas)
-    customCanvas.addEventListener('mousedown', customDragPatternListener)
-
-  } else {
-    customButton.innerHTML = "Lock"
-    customButton.classList.toggle("edit-button", false)
-    customButton.classList.toggle("lock-button", true)
-    customCanvas.classList.toggle("locked-pattern", false)
-    customCanvas.removeEventListener('mousedown', customDragPatternListener)
+  switch (newState) {
+    case LOCKED:
+      let customPattern = getPatternFromGrid(customGrid)
+      customDragPatternListener = dragPatternStartListener(customPattern, customCanvas)
+      customCanvas.addEventListener('mousedown', customDragPatternListener)
+      canvas.classList.toggle("crosshairMode", false)
+      canvas.addEventListener('mousedown', clickDrawStartListener)
+      canvas.removeEventListener('mousedown', cloneStartListener)
+      document.removeEventListener('mousemove', cloneDragListener)
+      document.removeEventListener('mouseup', cloneEndListener)
+    break
+    case EDITING:
+      customCanvas.removeEventListener('mousedown', customDragPatternListener)
+      canvas.classList.toggle("crosshairMode", false)
+      canvas.addEventListener('mousedown', clickDrawStartListener)
+      canvas.removeEventListener('mousedown', cloneStartListener)
+      document.removeEventListener('mousemove', cloneDragListener)
+      document.removeEventListener('mouseup', cloneEndListener)
+    break
+    case CLONING:
+      customCanvas.removeEventListener('mousedown', customDragPatternListener)
+      canvas.classList.toggle("crosshairMode", true)
+      canvas.removeEventListener('mousedown', clickDrawStartListener)
+      canvas.addEventListener('mousedown', cloneStartListener)
+      document.addEventListener('mousemove', cloneDragListener)
+      document.addEventListener('mouseup', cloneEndListener)
+    break
   }
-  isLocked = !isLocked
+  curCustomState = newState
 }
 
+// button click handlers
+const lockListener = (e) => { setCustomState(LOCKED) }
+const editListener = (e) => { setCustomState(EDITING) }
+const cloneListener = (e) => { setCustomState(CLONING) }
+
+// mouse event handlers
 const moveCustomListener = (e) => {
   const [rowID, colID] = getRowColID(e)
   rowHover.innerHTML = rowID
@@ -237,7 +245,8 @@ const moveCustomListener = (e) => {
 }
 
 const clickDrawCustomListener = (e) => {
-  if (!isLocked) {
+  if (curCustomState == CLONING) setCustomState(EDITING)
+  if (curCustomState == EDITING) {
     const [rowID, colID] = getRowColID(e)
     const thisCell = customGrid[rowID][colID]
     eraseMode = thisCell.living
@@ -248,6 +257,61 @@ const clickDrawCustomListener = (e) => {
   }
 }
 
+let cloneSelecting = false
+let cloneTopLeft, cloneBotRight, clonePattern, cloneFrame
+const cloneStartListener = (e) => {
+  const [rowID, colID] = getRowColID(e)
+  if (!cloneFrame) {
+    cloneFrame = document.createElement('div')
+    cloneFrame.setAttribute('id', 'cloneFrame')
+    cloneFrame.style.position = 'absolute'
+    cloneFrame.style.zIndex = 1000
+    cloneFrame.style.width = BOX_WIDTH*6 + 'px'
+    cloneFrame.style.height = BOX_WIDTH*6 + 'px'
+    cloneFrame.style.border = '3px solid #59cbda'
+    document.body.appendChild(cloneFrame)
+  }
+  cloneTopLeft = [rowID, colID]
+  cloneBotRight = [Math.min(cloneTopLeft[0]+6, maxRow), Math.min(cloneTopLeft[1]+6, maxCol)]
+  drawCloneFrame(rowID, colID)
+  clonePattern = clonePatternFromGrid(gridBoxes, cloneTopLeft, cloneBotRight)
+  cloneIntoCanvas(customCtx, customGrid, clonePattern)
+  cloneSelecting = true
+}
+
+const cloneDragListener = (e) => {
+  const [rowID, colID] = getRowColID(e, true, canvas)
+  if (cloneSelecting && isValidCell(rowID, colID)) {
+    cloneTopLeft = [rowID, colID]
+    cloneBotRight = [Math.min(cloneTopLeft[0]+6, maxRow), Math.min(cloneTopLeft[1]+6, maxCol)]
+    drawCloneFrame(rowID, colID)
+    clonePattern = clonePatternFromGrid(gridBoxes, cloneTopLeft, cloneBotRight)
+    cloneIntoCanvas(customCtx, customGrid, clonePattern)
+  }
+}
+
+const cloneEndListener = (e) => {
+  cloneSelecting = false
+  if (cloneFrame) {
+    document.body.removeChild(cloneFrame)
+    cloneFrame = null
+  }
+}
+
+const drawCloneFrame = (rowID, colID) => {
+  const canvasLeftX = canvas.getBoundingClientRect().left + window.scrollX
+  const canvasTopY = canvas.getBoundingClientRect().top + window.scrollY
+  const shiftX = colID*BOX_WIDTH
+  const shiftY = rowID*BOX_WIDTH
+  cloneFrame.style.left = canvasLeftX + shiftX + 'px'
+  cloneFrame.style.top = canvasTopY + shiftY + 'px'
+  const cellW =  Math.min(6, maxCol - colID)
+  const cellH = Math.min(6, maxRow - rowID)
+  cloneFrame.style.width = BOX_WIDTH*cellW + 'px'
+  cloneFrame.style.height = BOX_WIDTH*cellH + 'px'
+}
+
+/* EVENT LISTENER ASSIGNMENTS */
 // handles drawing/erasing cells in canvas
 canvas.addEventListener('mousemove', moveListener)
 document.addEventListener('mouseup', mouseUpListener(canvas))
@@ -257,11 +321,14 @@ for (const [id, node] of Object.entries(spaceshipNodes)) {
   node.addEventListener('mousedown', dragPatternStartListener(spaceshipPatterns[id], node))
   node.addEventListener('dragstart', () => false)
 }
-// handles button presses
+// handles button presses (main canvas)
 startButton.addEventListener('click', startListener)
 resetButton.addEventListener('click', resetListener)
 randomButton.addEventListener('click', randomListener)
-customButton.addEventListener('click', customListener)
+// handles button presses (custom canvas)
+lockButton.addEventListener('click', lockListener)
+editButton.addEventListener('click', editListener)
+cloneButton.addEventListener('click', cloneListener)
 // custom pattern canvas behavior
 customCanvas.addEventListener('mousemove', moveCustomListener)
 document.addEventListener('mouseup', mouseUpListener(customCanvas))
@@ -272,5 +339,5 @@ canvas.addEventListener('mouseout',() => {
   colHover.innerHTML = '---'
 })
 
-// when browser loads script
+/* run upon loading script */
 init()

@@ -22,9 +22,17 @@ export const randomCellGrid = (w, h, density) => [...Array(w)].map(row=>[...Arra
 export const isValidCell = (row, col) => (row>=0 && row<maxRow && col>=0 && col<maxCol)
 export const getFillColor = (thisCell) => thisCell.living ? LIVE_COLOR : 'white'
 
-export const getRowColID = (e) => {
-  const rowID = Math.floor(e.offsetY/BOX_WIDTH)
-  const colID = Math.floor(e.offsetX/BOX_WIDTH)
+export const getRowColID = (e, documentOrigin=false, canvasNode=null) => {
+  let offsetX, offsetY
+  if (documentOrigin && canvasNode != null) {
+    offsetX = e.clientX - canvasNode.getBoundingClientRect().left
+    offsetY = e.clientY - canvasNode.getBoundingClientRect().top
+  } else {
+    offsetX = e.offsetX
+    offsetY = e.offsetY
+  }
+  const rowID = Math.floor(offsetY/BOX_WIDTH)
+  const colID = Math.floor(offsetX/BOX_WIDTH)
   return [rowID, colID]
 }
 
@@ -64,6 +72,18 @@ export const toggleLife = (cell, grid) => {
   updateNeighborsLivingNeighbors(cell, grid)
 }
 
+export const setClickDrawCursor = (canvasNode, eraseMode) => {
+  if (eraseMode === undefined) {
+    canvasNode.classList.remove('eraseMode', 'pencilMode')
+  } else if (eraseMode) {
+    canvasNode.classList.add('eraseMode')
+    canvasNode.classList.remove('pencilMode')
+  } else {
+    canvasNode.classList.add('pencilMode')
+    canvasNode.classList.remove('eraseMode')
+  }
+}
+
 // drag/drop patterns onto canvas
 export const drawDragPattern = (patternCanvas, patternScheme) => {
   const patternCtx = patternCanvas.getContext('2d')
@@ -83,6 +103,16 @@ export const drawDragPattern = (patternCanvas, patternScheme) => {
   })
 }
 
+export const dropPattern = (ctx, grid, offsetX, offsetY, pattern) => {
+  const topRow = Math.round(offsetY/BOX_WIDTH + 0.4)
+  const leftCol = Math.round(offsetX/BOX_WIDTH + 0.1)
+  const botRow = topRow + pattern.length - 1
+  const rightCol = leftCol + pattern[0].length - 1
+  if (isValidCell(topRow, leftCol) && isValidCell(botRow, rightCol)) {
+    placePattern(ctx, grid, topRow, leftCol, pattern)
+  }
+}
+
 export const placePattern = (ctx, grid, topRowID, leftColID, pattern) => {
   for (let i=0; i < pattern.length; i++) {
     for (let j=0; j < pattern[0].length; j++) {
@@ -97,4 +127,22 @@ export const placePattern = (ctx, grid, topRowID, leftColID, pattern) => {
   }
 }
 
+export const cloneIntoCanvas = (ctx, grid, pattern) => {
+  for (let i=0; i < 6; i++) {
+    for (let j=0; j < 6; j++) {
+      const thisCell = grid[i][j]
+      const patternVal = i < pattern.length && j < pattern[0].length ? pattern[i][j] : 0
+      if (thisCell.living != (patternVal === 1)) {
+        toggleLife(thisCell, grid)
+        paintCell(ctx, thisCell)
+      }
+    }
+  }
+}
+
 export const getPatternFromGrid = (grid) => grid.map(row => row.map(cell => cell.living ? 1 : 0))
+export const clonePatternFromGrid = (grid, topLeft, botRight) => {
+  return grid.slice(topLeft[0], botRight[0]).map(row => {
+    return row.slice(topLeft[1], botRight[1]).map(cell => cell.living ? 1 : 0)
+  })
+}
