@@ -95,6 +95,16 @@ export const drawDragPattern = (patternCanvas, patternScheme) => {
   })
 }
 
+export const dropPattern = (ctx, grid, offsetX, offsetY, pattern) => {
+  const topRow = Math.round(offsetY/BOX_WIDTH + 0.4)
+  const leftCol = Math.round(offsetX/BOX_WIDTH + 0.1)
+  const botRow = topRow + pattern.length - 1
+  const rightCol = leftCol + pattern[0].length - 1
+  if (isValidCell(topRow, leftCol) && isValidCell(botRow, rightCol)) {
+    placePattern(ctx, grid, topRow, leftCol, pattern)
+  }
+}
+
 export const placePattern = (ctx, grid, topRowID, leftColID, pattern) => {
   for (let i=0; i < pattern.length; i++) {
     for (let j=0; j < pattern[0].length; j++) {

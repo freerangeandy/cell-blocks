@@ -2,8 +2,8 @@ import { CANVAS_WIDTH, CANVAS_HEIGHT, BOX_WIDTH, maxRow, maxCol, RAND_DENSITY,
         spaceshipPatterns, LOCKED, EDITING, CLONING } from "./constants.js"
 import { blankCellGrid, getRowColID, fadeIn, paintCell, paintAllCells, isValidCell,
         getFillColor, updateNeighborsLivingNeighbors, toggleLife, setClickDrawCursor,
-        placePattern, drawDragPattern, drawGrid, randomCellGrid, getPatternFromGrid,
-        clonePatternFromGrid, cloneIntoCanvas } from "./utilities.js"
+        dropPattern, placePattern, drawDragPattern, drawGrid, randomCellGrid,
+        getPatternFromGrid, clonePatternFromGrid, cloneIntoCanvas } from "./utilities.js"
 import Cell from "./Cell"
 
 const canvas = document.getElementById('mainCanvas')
@@ -169,7 +169,9 @@ const dragPatternStartListener = (pattern, originNode) => (e) => {
     document.removeEventListener('mousemove', movePatternListener)
     document.removeEventListener('mouseup', dropPatternListener)
     if (clonedYet) {
-      dropPattern(e, shiftX, shiftY, pattern)
+      const offsetX = e.clientX - shiftX - canvas.getBoundingClientRect().left
+      const offsetY = e.clientY - shiftY - canvas.getBoundingClientRect().top
+      dropPattern(ctx, gridBoxes, offsetX, offsetY, pattern)
       document.body.removeChild(dragImage)
       dragImage = null
       clonedYet = false
@@ -178,19 +180,6 @@ const dragPatternStartListener = (pattern, originNode) => (e) => {
 
   document.addEventListener('mousemove', movePatternListener)
   document.addEventListener('mouseup', dropPatternListener)
-}
-
-const dropPattern = (e, shiftX, shiftY, pattern) => {
-  let offsetX = e.clientX - shiftX - canvas.getBoundingClientRect().left
-  let offsetY = e.clientY - shiftY - canvas.getBoundingClientRect().top
-
-  const topRow = Math.round(offsetY/BOX_WIDTH + 0.4)
-  const leftCol = Math.round(offsetX/BOX_WIDTH + 0.1)
-  const botRow = topRow + pattern.length - 1
-  const rightCol = leftCol + pattern[0].length - 1
-  if (isValidCell(topRow, leftCol) && isValidCell(botRow, rightCol)) {
-    placePattern(ctx, gridBoxes, topRow, leftCol, pattern)
-  }
 }
 
 /* CUSTOM CANVAS */
