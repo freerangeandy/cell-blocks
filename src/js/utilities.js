@@ -22,9 +22,17 @@ export const randomCellGrid = (w, h, density) => [...Array(w)].map(row=>[...Arra
 export const isValidCell = (row, col) => (row>=0 && row<maxRow && col>=0 && col<maxCol)
 export const getFillColor = (thisCell) => thisCell.living ? LIVE_COLOR : 'white'
 
-export const getRowColID = (e) => {
-  const rowID = Math.floor(e.offsetY/BOX_WIDTH)
-  const colID = Math.floor(e.offsetX/BOX_WIDTH)
+export const getRowColID = (e, documentOrigin=false, canvasNode=null) => {
+  let offsetX, offsetY
+  if (documentOrigin && canvasNode != null) {
+    offsetX = e.clientX - canvasNode.getBoundingClientRect().left
+    offsetY = e.clientY - canvasNode.getBoundingClientRect().top
+  } else {
+    offsetX = e.offsetX
+    offsetY = e.offsetY
+  }
+  const rowID = Math.floor(offsetY/BOX_WIDTH)
+  const colID = Math.floor(offsetX/BOX_WIDTH)
   return [rowID, colID]
 }
 

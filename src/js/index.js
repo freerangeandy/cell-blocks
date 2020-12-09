@@ -202,7 +202,7 @@ const setCustomState = (newState) => {
       canvas.classList.toggle("crosshairMode", false)
       canvas.addEventListener('mousedown', clickDrawStartListener)
       canvas.removeEventListener('mousedown', cloneStartListener)
-      canvas.removeEventListener('mousemove', cloneDragListener)
+      document.removeEventListener('mousemove', cloneDragListener)
       document.removeEventListener('mouseup', cloneEndListener)
     break
     case EDITING:
@@ -210,7 +210,7 @@ const setCustomState = (newState) => {
       canvas.classList.toggle("crosshairMode", false)
       canvas.addEventListener('mousedown', clickDrawStartListener)
       canvas.removeEventListener('mousedown', cloneStartListener)
-      canvas.removeEventListener('mousemove', cloneDragListener)
+      document.removeEventListener('mousemove', cloneDragListener)
       document.removeEventListener('mouseup', cloneEndListener)
     break
     case CLONING:
@@ -218,7 +218,7 @@ const setCustomState = (newState) => {
       canvas.classList.toggle("crosshairMode", true)
       canvas.removeEventListener('mousedown', clickDrawStartListener)
       canvas.addEventListener('mousedown', cloneStartListener)
-      canvas.addEventListener('mousemove', cloneDragListener)
+      document.addEventListener('mousemove', cloneDragListener)
       document.addEventListener('mouseup', cloneEndListener)
     break
   }
@@ -279,7 +279,7 @@ const cloneStartListener = (e) => {
 }
 
 const cloneDragListener = (e) => {
-  const [rowID, colID] = getRowColID(e)
+  const [rowID, colID] = getRowColID(e, true, canvas)
   if (cloneSelecting && isValidCell(rowID, colID)) {
     cloneTopLeft = [rowID, colID]
     cloneBotRight = [Math.min(cloneTopLeft[0]+6, maxRow), Math.min(cloneTopLeft[1]+6, maxCol)]
