@@ -4,5 +4,12 @@
   "main": "index.js",
   "repository": "https://github.com/freerangeandy/cell-blocks.git",
   "author": "freerangeandy <freerangeandy@gmail.com>",
-  "license": "MIT"
+  "license": "MIT",
+  "scripts": {
+    "start": "parcel index.html",
+    "build": "parcel build index.html --out-dir dist --public-url ./"
+  },
+  "devDependencies": {
+    "cssnano": "^4.1.10"
+  }
 }
