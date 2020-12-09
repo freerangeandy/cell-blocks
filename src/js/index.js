@@ -298,14 +298,14 @@ const cloneEndListener = (e) => {
 }
 
 const drawCloneFrame = (rowID, colID) => {
-  const pageX = canvas.getBoundingClientRect().left
-  const pageY = canvas.getBoundingClientRect().top
+  const canvasLeftX = canvas.getBoundingClientRect().left + window.scrollX
+  const canvasTopY = canvas.getBoundingClientRect().top + window.scrollY
   const shiftX = colID*BOX_WIDTH
   const shiftY = rowID*BOX_WIDTH
-  cloneFrame.style.left = pageX + shiftX + 'px'
-  cloneFrame.style.top = pageY + shiftY + 'px'
+  cloneFrame.style.left = canvasLeftX + shiftX + 'px'
+  cloneFrame.style.top = canvasTopY + shiftY + 'px'
   const cellW =  Math.min(6, maxCol - colID)
-  const cellH = Math.min(6,  maxRow - rowID)
+  const cellH = Math.min(6, maxRow - rowID)
   cloneFrame.style.width = BOX_WIDTH*cellW + 'px'
   cloneFrame.style.height = BOX_WIDTH*cellH + 'px'
 }
