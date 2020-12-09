@@ -1,0 +1,27 @@
+.header-row {
+  width: 200px;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: baseline;
+}
+
+#startButton {
+  min-width: 70px;
+  height: 30px;
+  border-radius: 5px;
+  background-color: #81da6b;
+  margin: 4px;
+  font-size: 1rem;
+}
+
+#startButton:active {
+  background-color: #75c561;
+}
+
+canvas {
+  border: 1px solid #555555;
+}
+
+
+/*# sourceMappingURL=/main.af46ece4.css.map */
