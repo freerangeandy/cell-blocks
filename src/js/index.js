@@ -304,6 +304,10 @@ const drawCloneFrame = (rowID, colID) => {
   const shiftY = rowID*BOX_WIDTH
   cloneFrame.style.left = pageX + shiftX + 'px'
   cloneFrame.style.top = pageY + shiftY + 'px'
+  const cellW =  Math.min(6, maxCol - colID)
+  const cellH = Math.min(6,  maxRow - rowID)
+  cloneFrame.style.width = BOX_WIDTH*cellW + 'px'
+  cloneFrame.style.height = BOX_WIDTH*cellH + 'px'
 }
 
 /* EVENT LISTENER ASSIGNMENTS */
