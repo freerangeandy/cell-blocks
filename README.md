@@ -1,7 +1,8 @@
 ### *rough draft*
 # Cell Blocks
-cellular automata sandbox
-conway game of life rules
+An interactive [cellular automaton](https://en.wikipedia.org/wiki/Cellular_automaton) with cell-state evolution governed by [Conway's Game of Life](https://en.wikipedia.org/wiki/Conway%27s_Game_of_Life) rules - built using HTML5 Canvas, JavaScript, and CSS.
+
+Live link: [freerangeandy.github.io/cell-blocks/](https://freerangeandy.github.io/cell-blocks/)
 
 ## Setup Instructions
 clone repo
@@ -25,4 +26,4 @@ patterns:
 -drag and drop
 
 ## Credits
-Conway's Game of Life rules and patterns: [Wikipedia](https://en.wikipedia.org/wiki/Conway%27s_Game_of_Life)
+Conway's Game of Life patterns: [Wikipedia](https://en.wikipedia.org/wiki/Conway%27s_Game_of_Life)
