@@ -53,6 +53,7 @@ body {
 }
 
 #randomButton {
+  min-width: 100px;
   background-color: #d555ff;
 }
 

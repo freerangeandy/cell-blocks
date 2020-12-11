@@ -1,1 +1,46 @@
-<!DOCTYPE html><html lang="en"><title>Cell Blocks</title><head><link rel="stylesheet" href="main.b60305d3.css"></head><body> <h4><span id="rowHover">---</span>, <span id="colHover">---</span></h4> <div class="header-row"> <button class="start-button top-button" id="startButton">Start</button> <button class="top-button" id="resetButton">Reset</button> <button class="top-button" id="randomButton">Randomize</button> </div> <div class="canvas-row"> <canvas id="mainCanvas" class="mainCanvas" height="600" width="1200"></canvas> </div> <div class="pattern-row"> <div> <canvas id="gliderPattern" class="originPattern"></canvas> <h4>Glider</h4> </div> <div> <canvas id="lwssPattern" class="originPattern"></canvas> <h4>Light-Weight<br>Spaceship</h4> </div> <div> <canvas id="mwssPattern" class="originPattern"></canvas> <h4>Middle-Weight<br>Spaceship</h4> </div> <div> <canvas id="hwssPattern" class="originPattern"></canvas> <h4>Heavy-Weight<br>Spaceship</h4> </div> <div class="custom-area"> <canvas id="customCanvas" class="custom-pattern locked-pattern"></canvas> <div> <h4>Custom Pattern</h4> <button disabled class="lock-button top-button" id="lockButton">Lock</button> <button class="edit-button top-button" id="editButton">Edit</button> <button class="clone-button top-button" id="cloneButton">Clone</button> </div> </div> </div> <script src="js.9b7d365b.js"></script> </body></html>
+<!DOCTYPE html>
+<html lang="en">
+  <title>Cell Blocks</title>
+  <head>
+    <link rel="stylesheet" href="/main.1603664a.css">
+  <script src="/main.1603664a.js"></script></head>
+  <body>
+    <h4><span id="rowHover">---</span>, <span id="colHover">---</span></h4>
+    <div class="header-row">
+      <button class="top-button start-button" id="startButton">Start</button>
+      <button class="top-button" id="resetButton">Reset</button>
+      <button class="top-button" id="randomButton">Randomize</button>
+    </div>
+    <div class="canvas-row">
+      <canvas id="mainCanvas" class="mainCanvas" height="600" width="1200"></canvas>
+    </div>
+    <div class="pattern-row">
+      <div>
+        <canvas id="gliderPattern" class="originPattern"></canvas>
+        <h4>Glider</h4>
+      </div>
+      <div>
+        <canvas id="lwssPattern" class="originPattern"></canvas>
+        <h4>Light-Weight<br>Spaceship</h4>
+      </div>
+      <div>
+        <canvas id="mwssPattern" class="originPattern"></canvas>
+        <h4>Middle-Weight<br>Spaceship</h4>
+      </div>
+      <div>
+        <canvas id="hwssPattern" class="originPattern"></canvas>
+        <h4>Heavy-Weight<br>Spaceship</h4>
+      </div>
+      <div class="custom-area">
+        <canvas id="customCanvas" class="custom-pattern locked-pattern"></canvas>
+        <div>
+          <h4>Custom Pattern</h4>
+          <button disabled="" class="top-button lock-button" id="lockButton">Lock</button>
+          <button class="top-button edit-button" id="editButton">Edit</button>
+          <button class="top-button clone-button" id="cloneButton">Clone</button>
+        </div>
+      </div>
+    </div>
+    <script src="/js.d818e0ef.js"></script>
+  </body>
+</html>

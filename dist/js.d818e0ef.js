@@ -848,12 +848,12 @@ var cloneStartListener = function cloneStartListener(e) {
     cloneFrame.style.width = _constants.BOX_WIDTH * 6 + 'px';
     cloneFrame.style.height = _constants.BOX_WIDTH * 6 + 'px';
     cloneFrame.style.border = '3px solid #59cbda';
+    drawCloneFrame(rowID, colID);
     document.body.appendChild(cloneFrame);
   }
 
   cloneTopLeft = [rowID, colID];
   cloneBotRight = [Math.min(cloneTopLeft[0] + 6, _constants.maxRow), Math.min(cloneTopLeft[1] + 6, _constants.maxCol)];
-  drawCloneFrame(rowID, colID);
   clonePattern = (0, _utilities.clonePatternFromGrid)(gridBoxes, cloneTopLeft, cloneBotRight);
   (0, _utilities.cloneIntoCanvas)(customCtx, customGrid, clonePattern);
   cloneSelecting = true;
@@ -962,7 +962,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "50338" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "65491" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};

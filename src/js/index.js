@@ -269,11 +269,11 @@ const cloneStartListener = (e) => {
     cloneFrame.style.width = BOX_WIDTH*6 + 'px'
     cloneFrame.style.height = BOX_WIDTH*6 + 'px'
     cloneFrame.style.border = '3px solid #59cbda'
+    drawCloneFrame(rowID, colID)
     document.body.appendChild(cloneFrame)
   }
   cloneTopLeft = [rowID, colID]
   cloneBotRight = [Math.min(cloneTopLeft[0]+6, maxRow), Math.min(cloneTopLeft[1]+6, maxCol)]
-  drawCloneFrame(rowID, colID)
   clonePattern = clonePatternFromGrid(gridBoxes, cloneTopLeft, cloneBotRight)
   cloneIntoCanvas(customCtx, customGrid, clonePattern)
   cloneSelecting = true
