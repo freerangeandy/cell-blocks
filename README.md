@@ -25,4 +25,4 @@ patterns:
 -drag and drop
 
 ## Credits
-wikipedia conway game of life page
+Conway's Game of Life rules and patterns: [Wikipedia](https://en.wikipedia.org/wiki/Conway%27s_Game_of_Life)
